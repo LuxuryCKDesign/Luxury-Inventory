@@ -276,6 +276,12 @@
   .rem-mat{font-family:var(--mono);font-size:10.5px;font-weight:700;padding:1px 6px;border-radius:3px;background:#7C93C4;color:#151515;white-space:nowrap;}
   .rem-size{font-family:var(--mono);font-size:15px;font-weight:600;margin-top:4px;}
   .rem-meta{font-size:11px;color:var(--text-dim);margin-top:3px;font-family:var(--mono);}
+  .rem-order{display:inline-block;font-size:11.5px;font-weight:600;color:var(--accent);border:1px solid var(--accent);border-radius:3px;padding:1px 6px;margin-top:5px;}
+  .rem-order.done{color:var(--text-dim);border-color:var(--border);}
+  .rem-notes-count{font-size:11.5px;color:var(--accent);margin-top:4px;}
+  .rem-card-wrap{margin-bottom:10px;}
+  .rem-card-wrap .product-card{margin-bottom:0;}
+  .rem-card-wrap .notes-box{margin:4px 0 0;}
   .rem-del{flex:none;background:none;border:1px solid var(--out);color:var(--out);border-radius:var(--radius);padding:7px 10px;font-size:12px;font-weight:600;}
   .rem-count{font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin:-4px 0 10px;}
   .last-rem{background:var(--panel);border:1px solid var(--in);border-radius:var(--radius);padding:12px;margin-top:12px;font-size:13px;}
@@ -353,7 +359,7 @@
         <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
       </div>
     </div>
-    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v24</span></div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v25</span></div>
     <div class="top-nav">
       <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
       <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
@@ -451,7 +457,7 @@
   </div>
 
   <div class="view hidden" id="view-remanentes">
-    <input class="search-input" id="remSearch" placeholder="Buscar por material, color o medida…">
+    <input class="search-input" id="remSearch" placeholder="Buscar por material, color, medida, orden o nota…">
     <div class="chips" id="remChips"></div>
     <div class="rem-count" id="remCount"></div>
     <div id="remList"></div>
@@ -569,7 +575,7 @@
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 24 · logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 25 · cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -651,6 +657,16 @@
           <div class="field"><label>Medida del remanente</label><input id="rmMedida" placeholder="47 5/8 x 82 7/8" autocomplete="off"></div>
         </div>
       </details>
+      <div class="field" style="margin-top:12px;">
+        <label>Orden vinculada (opcional)</label>
+        <select id="rmOrder"></select>
+      </div>
+      <div class="field">
+        <label>Nota del remanente (opcional)</label>
+        <textarea id="rmNoteText" rows="3" placeholder="Ej. Sobró del Job 1234, reservado para la puerta del baño"
+          style="width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:var(--radius);padding:10px;font-size:16px;resize:vertical;"></textarea>
+      </div>
+      <div id="rmNotesExisting"></div>
       <button class="primary-btn" id="rmSaveBtn">Guardar remanente</button>
       <button class="secondary-btn" id="rmCancelBtn">Cancelar</button>
       <button class="danger-btn" id="rmDeleteBtn" style="display:none;">Quitar de remanentes</button>
@@ -2113,6 +2129,7 @@
         <div class="oc-top"><span class="oc-job">${esc(o.job||'Sin nombre')}</span><span class="order-status" style="${pct===50?'color:var(--accent)':''}">${orderStatusText(o)}</span></div>
         ${o.note?`<div class="oc-note">${esc(o.note)}</div>`:''}
         ${orderNotes(o).length?`<div class="oc-note" style="color:var(--accent);">${orderNotes(o).length} nota(s) en este trabajo</div>`:''}
+        ${remnantsOfOrder(o.id).length?`<div class="oc-note" style="color:#7C93C4;">${remnantsOfOrder(o.id).length} remanente(s) vinculado(s)</div>`:''}
         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
         <div class="oc-meta"><span>${sinHw?'sin hardware asignado':`${done}/${req} despachados`}</span><span>${esc(o.createdBy||'—')}${o.createdSlot?' #'+o.createdSlot:''}</span></div>
         ${hasMat?`<div class="split-row">
@@ -2158,6 +2175,13 @@
         ${orderNotes(o).map(n=>`<div class="note-item">
           <div class="note-text">${esc(n.text)}</div>
           <div class="note-meta">${esc(n.by||'—')}${n.slot?' #'+n.slot:''} · ${new Date(n.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</div>
+        </div>`).join('')}
+      </details>` : ''}
+      ${remnantsOfOrder(o.id).length ? `<details class="notes-box">
+        <summary>Remanentes vinculados (${remnantsOfOrder(o.id).length})</summary>
+        ${remnantsOfOrder(o.id).map(r=>`<div class="note-item">
+          <div class="note-text"><b>${esc(remLabel(r))}</b></div>
+          ${remNotes(r).map(n=>`<div class="note-meta" style="color:var(--text);font-family:var(--sans);font-size:12.5px;">${esc(n.text)}</div>`).join('')}
         </div>`).join('')}
       </details>` : ''}
       <div class="block-title">Productos (hardware)</div>` +
@@ -3237,6 +3261,9 @@
     document.getElementById('rmFixSummary').textContent = read ? 'Corregir material o medida' : 'Material y medida';
     document.getElementById('rmSaveBtn').textContent = isEdit ? 'Guardar cambios' : 'Guardar remanente';
     document.getElementById('rmDeleteBtn').style.display = isEdit ? 'block' : 'none';
+    renderRemOrderSelect(o.orderId || (!isEdit && state.activeOrderId) || '');
+    document.getElementById('rmNoteText').value = '';
+    renderRemNotesExisting();
     renderRemColorChips();
     document.getElementById('modalRemnant').classList.remove('hidden');
     if(!isEdit) setTimeout(()=>{
@@ -3244,6 +3271,58 @@
       try{ target.focus({preventScroll:true}); }catch(e){ target.focus(); }
     }, 120);
   }
+
+  function remNotes(r){ return (r && r.notes) ? r.notes : []; }
+  function remOrder(r){ return r && r.orderId ? state.orders.find(o=>o.id===r.orderId) : null; }
+  function remOrderName(r){
+    if(!r || !r.orderId) return '';
+    const o = remOrder(r);
+    return o ? (o.job||'Sin nombre') : (r.orderJob || 'orden borrada');
+  }
+  function remnantsOfOrder(orderId){ return state.remnants.filter(r=>r.orderId===orderId); }
+
+  function renderRemOrderSelect(cur){
+    const sel = document.getElementById('rmOrder');
+    const list = pendingOrders().slice();
+    // la orden ya vinculada se sigue mostrando aunque esté completada
+    const curO = cur && state.orders.find(o=>o.id===cur);
+    if(curO && !list.includes(curO)) list.push(curO);
+    let opts = `<option value="">Sin orden</option>` + list.map(o=>
+      `<option value="${o.id}">${esc(o.job||'Sin nombre')}${o.status==='completado'?' (completada)':''}</option>`).join('');
+    if(cur && !curO){
+      const r = remEdit && remEdit.id && state.remnants.find(x=>x.id===remEdit.id);
+      opts += `<option value="${esc(cur)}">${esc((r&&r.orderJob)||'Orden borrada')} (borrada)</option>`;
+    }
+    sel.innerHTML = opts;
+    sel.value = cur || '';
+  }
+
+  function renderRemNotesExisting(){
+    const box = document.getElementById('rmNotesExisting');
+    const r = remEdit && remEdit.mode === 'editar' && state.remnants.find(x=>x.id===remEdit.id);
+    const notas = remNotes(r);
+    if(!notas.length){ box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="opt-label">Notas ya escritas (${notas.length})</div>` + notas.map(n=>`
+      <div class="calc-row">
+        <div class="note-text">${esc(n.text)}</div>
+        <div class="note-meta">${esc(n.by||'—')}${n.slot?' #'+n.slot:''} · ${new Date(n.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</div>
+        <button class="secondary-btn" data-act="rem-note-del" data-nid="${n.id}" style="margin-top:8px;padding:8px;color:var(--out);border-color:var(--out);">Eliminar nota</button>
+      </div>`).join('');
+  }
+  document.getElementById('rmNotesExisting').addEventListener('click', async (e)=>{
+    const b = e.target.closest('[data-act="rem-note-del"]'); if(!b || !remEdit || !remEdit.id) return;
+    const id = remEdit.id, nid = b.dataset.nid;
+    if(!await askConfirm('Se eliminará esta nota del remanente.', 'Eliminar nota')) return;
+    const {next} = await mutateShared(STORE.REMNANTS, (list)=>{
+      list = list||[]; const i = list.findIndex(x=>x.id===id);
+      if(i>-1) list[i] = {...list[i], notes:(list[i].notes||[]).filter(n=>n.id!==nid)};
+      return list;
+    }, state.remnants);
+    state.remnants = next;
+    renderRemNotesExisting();
+    renderRemnants();
+    toast('Nota eliminada');
+  });
 
   function renderRemColorChips(){
     const box = document.getElementById('rmColorChips');
@@ -3294,6 +3373,12 @@
       toast(!material ? 'Falta el material (ej. 3/4 PVC).' : 'Falta la medida (ej. 47 5/8 x 82 7/8).', 'err');
       return;
     }
+    const orderId = document.getElementById('rmOrder').value || null;
+    const ordSel = orderId && state.orders.find(o=>o.id===orderId);
+    const prevRem = remEdit.mode === 'editar' ? state.remnants.find(r=>r.id===remEdit.id) : null;
+    const orderJob = ordSel ? (ordSel.job||'Sin nombre') : (orderId && prevRem ? prevRem.orderJob||'' : '');
+    const noteText = document.getElementById('rmNoteText').value.trim();
+    const nota = noteText ? {id:uid(), text:noteText, ts:Date.now(), by: state.me?state.me.name:'sin identificar', slot: state.me?state.me.slot:null} : null;
     const sz = remParseSize(medida);
     if(sz) medida = sz.txt;
     const mm = remParseMaterial(material);
@@ -3306,22 +3391,26 @@
         const {next} = await mutateShared(STORE.REMNANTS, (list)=>{
           list = list||[]; const i = list.findIndex(r=>r.id===id);
           if(i>-1) list[i] = {...list[i], color, material, medida, ancho: sz?sz.w:null, largo: sz?sz.l:null,
+                               orderId, orderJob, notes: (list[i].notes||[]).concat(nota?[nota]:[]),
                                editedAt:Date.now(), editedBy: state.me?state.me.name:'sin identificar'};
           return list;
         }, state.remnants);
         state.remnants = next;
         await logEvent({kind:'evt', text:`Editó el remanente ${remLabel({material, medida, color})}`});
+        if(prevRem && (prevRem.orderId||null) !== orderId)
+          await logEvent({kind:'evt', text: orderId ? `Vinculó el remanente ${remLabel({material, medida, color})} a ${orderJob}` : `Desvinculó el remanente ${remLabel({material, medida, color})} de ${remOrderName(prevRem)}`});
+        if(nota) await logEvent({kind:'evt', text:`Añadió una nota al remanente ${remLabel({material, medida, color})}`});
         toast('Remanente actualizado', 'ok');
       }else{
         const dup = state.remnants.find(r=> r.material===material && r.medida===medida
           && (r.color||'').toLowerCase()===color.toLowerCase() && Date.now() - (r.createdAt||0) < 5*60*1000);
         if(dup && !await askConfirm(`Hace un momento ya se añadió un remanente igual (${remLabel(dup)}). ¿Añadir otro?`, 'Añadir otro')) return;
         const rem = {id:uid(), material, medida, ancho: sz?sz.w:null, largo: sz?sz.l:null, color,
-          origen: remEdit.mode, createdAt: Date.now(),
+          origen: remEdit.mode, orderId, orderJob, notes: nota?[nota]:[], createdAt: Date.now(),
           createdBy: state.me?state.me.name:'sin identificar', createdSlot: state.me?state.me.slot:null};
         const {next} = await mutateShared(STORE.REMNANTS, (list)=>{ list = list||[]; list.unshift(rem); return list; }, state.remnants);
         state.remnants = next;
-        await logEvent({kind:'evt', text:`Añadió el remanente ${remLabel(rem)}`});
+        await logEvent({kind:'evt', text:`Añadió el remanente ${remLabel(rem)}${orderId?' a '+orderJob:''}`});
         lastAddedRemnant = rem;
         toast(`Añadido a Remanentes · ${material} · ${medida}`, 'ok');
       }
@@ -3363,7 +3452,7 @@
     return state.remnants.filter(r=>{
       if(state.remFilter && r.material !== state.remFilter) return false;
       if(q){
-        const hay = `${r.material||''} ${r.medida||''} ${r.color||''} ${r.createdBy||''}`.toLowerCase();
+        const hay = `${r.material||''} ${r.medida||''} ${r.color||''} ${r.createdBy||''} ${remOrderName(r)} ${remNotes(r).map(n=>n.text).join(' ')}`.toLowerCase();
         if(!q.split(/\s+/).every(t=>hay.includes(t))) return false;
       }
       return true;
@@ -3388,19 +3477,32 @@
       return;
     }
     if(!list.length){ box.innerHTML = `<div class="empty-state">Ningún remanente coincide con la búsqueda.</div>`; return; }
-    box.innerHTML = list.map(r=>`
+    box.innerHTML = list.map(r=>{
+      const notas = remNotes(r), ord = remOrder(r);
+      const ordDone = ord && ord.status==='completado';
+      return `<div class="rem-card-wrap">
       <div class="product-card rem-card" style="--section-color:#7C93C4">
         <div class="pc-main" data-act="rem-edit" data-id="${r.id}" role="button" tabindex="0">
           <div class="pc-top"><span class="rem-mat">${esc(r.material||'—')}</span><span class="pc-name">${esc(r.color||'sin color')}</span></div>
           <div class="rem-size">${esc(r.medida||'—')}</div>
+          ${r.orderId?`<div class="rem-order ${ordDone||!ord?'done':''}">Orden: ${esc(remOrderName(r))}${ordDone?' (completada)':''}</div>`:''}
           <div class="rem-meta">${esc(r.createdBy||'—')}${r.createdSlot?' #'+r.createdSlot:''} · ${new Date(r.createdAt||Date.now()).toLocaleDateString('es')}</div>
         </div>
         <button class="rem-del" data-act="rem-del" data-id="${r.id}">Quitar</button>
-      </div>`).join('');
+      </div>
+      ${notas.length?`<details class="notes-box">
+        <summary>Ver notas (${notas.length})</summary>
+        ${notas.map(n=>`<div class="note-item">
+          <div class="note-text">${esc(n.text)}</div>
+          <div class="note-meta">${esc(n.by||'—')}${n.slot?' #'+n.slot:''} · ${new Date(n.ts).toLocaleString('es',{dateStyle:'short',timeStyle:'short'})}</div>
+        </div>`).join('')}
+      </details>`:''}
+      </div>`;
+    }).join('');
   }
   function openRemnantEdit(id){
     const r = state.remnants.find(x=>x.id===id); if(!r) return;
-    openRemnantModal({mode:'editar', id, material:r.material, medida:r.medida, color:r.color});
+    openRemnantModal({mode:'editar', id, material:r.material, medida:r.medida, color:r.color, orderId:r.orderId||''});
   }
   document.getElementById('remList').addEventListener('click', (e)=>{
     const del = e.target.closest('[data-act="rem-del"]');
