@@ -20,7 +20,7 @@
   :root{
     --bg:#1B1D21; --panel:#232629; --panel-alt:#2A2E32; --border:#3B3F45;
     --text:#ECE9E2; --text-dim:#93989E; --accent:#E4B23A; --accent-ink:#3A2E0C;
-    --in:#5F9E6F; --out:#C1543A; --price:#5B9BD5; --wh:#4C8DF0; --radius:5px; --gold:#D8BC84;
+    --in:#5F9E6F; --out:#C1543A; --price:#5B9BD5; --wh:#4C8DF0; --whhw:#F2D12E; --radius:5px; --gold:#D8BC84;
     --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
   }
   *{box-sizing:border-box;}
@@ -230,6 +230,10 @@
   .split-chip.ok{color:var(--in);border-color:var(--in);}
   .split-chip.wh{color:var(--wh);border-color:var(--wh);}
   .mat-line.wh{border-left-color:var(--wh);}
+  .split-chip.whhw{color:var(--whhw);border-color:var(--whhw);}
+  .order-line.whhw{border-color:var(--whhw);}
+  .order-line.whhw .ol-done:not(.full){color:var(--whhw);}
+  .wh-pick{display:block;width:100%;margin-top:8px;padding:12px;border-radius:var(--radius);background:var(--panel-alt);font-weight:700;font-size:14px;border:1px solid;}
   .wh-btn{border-color:var(--wh) !important;color:var(--wh) !important;}
   .block-title{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);margin:14px 0 8px;font-weight:600;}
 
@@ -362,7 +366,7 @@
         <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
       </div>
     </div>
-    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v27</span></div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v28</span></div>
     <div class="top-nav">
       <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
       <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
@@ -568,7 +572,7 @@
       <button class="primary-btn" id="odScanBtn">Escanear esta orden</button>
       <button class="secondary-btn" id="odHwBtn">Marcar hardware completado</button>
       <button class="secondary-btn" id="odMatBtn">Marcar materiales completados</button>
-      <button class="secondary-btn wh-btn" id="odMatWhBtn">Planchas entregadas en almacén</button>
+      <button class="secondary-btn wh-btn" id="odMatWhBtn">Entregado en el almacén</button>
       <button class="secondary-btn" id="odFinishBtn">Marcar todo como completado</button>
       <button class="secondary-btn" id="odEditBtn">Modificar orden (admin)</button>
       <button class="danger-btn" id="odDeleteBtn">Eliminar orden</button>
@@ -579,7 +583,7 @@
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 27 · en Órdenes, «Planchas entregadas en almacén» solo las marca en azul sin completar; al completarlas pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 28 · en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -683,6 +687,15 @@
       <p style="color:var(--text-dim);font-size:13.5px;line-height:1.6;margin:0 0 6px;" id="cfText"></p>
       <button class="primary-btn" id="cfYes">Sí, continuar</button>
       <button class="secondary-btn" id="cfNo">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="modalWh">
+    <div class="modal">
+      <div class="modal-title"><span>Entregado en el almacén</span><button class="icon-btn" data-close="modalWh">✕</button></div>
+      <p style="color:var(--text-dim);font-size:13.5px;line-height:1.6;margin:0 0 6px;">¿Qué se entregó en el almacén? Solo cambia el color y el estado; la orden no se completa hasta usar los botones de completado.</p>
+      <button class="wh-pick" id="whPickMat" style="color:var(--wh);border-color:var(--wh);">Planchas (azul)</button>
+      <button class="wh-pick" id="whPickHw" style="color:var(--whhw);border-color:var(--whhw);">Hardware (amarillo)</button>
     </div>
   </div>
 
@@ -2041,6 +2054,10 @@
   // Al marcar los materiales completados pasan a verde como siempre.
   function matWarehouse(o){ return !matComplete(o) && o.matWarehouse===true; }
   function matChipClass(o){ return matComplete(o) ? 'ok' : (matWarehouse(o) ? 'wh' : ''); }
+  // hardware entregado en el almacén: igual, pero en amarillo
+  function hwWarehouse(o){ return (o.lines||[]).length>0 && !hwComplete(o) && o.hwWarehouse===true; }
+  function hwChipClass(o){ if(!(o.lines||[]).length) return ''; return hwComplete(o) ? 'ok' : (hwWarehouse(o) ? 'whhw' : ''); }
+  function hwChipText(o){ if(!(o.lines||[]).length) return 'Sin hardware'; return hwComplete(o) ? 'Hardware ✓' : (hwWarehouse(o) ? 'Hardware en almacén' : 'Hardware pendiente'); }
   function matChipText(o){ return matComplete(o) ? 'Materiales ✓' : (matWarehouse(o) ? 'Materiales en almacén' : 'Materiales pendiente'); }
   function orderPct(o){
     if(hasMaterials(o)) return (hwComplete(o)?50:0) + (matComplete(o)?50:0);
@@ -2141,9 +2158,9 @@
         ${remnantsOfOrder(o.id).length?`<div class="oc-note" style="color:#7C93C4;">${remnantsOfOrder(o.id).length} remanente(s) vinculado(s)</div>`:''}
         <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
         <div class="oc-meta"><span>${sinHw?'sin hardware asignado':`${done}/${req} despachados`}</span><span>${esc(o.createdBy||'—')}${o.createdSlot?' #'+o.createdSlot:''}</span></div>
-        ${hasMat?`<div class="split-row">
-          <span class="split-chip ${hwOk&&!sinHw?'ok':''}">${sinHw?'Sin hardware':`Hardware ${hwOk?'✓':'pendiente'}`}</span>
-          <span class="split-chip ${matChipClass(o)}">${matChipText(o)}</span>
+        ${(hasMat||hwWarehouse(o))?`<div class="split-row">
+          <span class="split-chip ${hwChipClass(o)}">${hwChipText(o)}</span>
+          ${hasMat?`<span class="split-chip ${matChipClass(o)}">${matChipText(o)}</span>`:''}
         </div>`:''}
         <div class="oc-actions">
           <button data-act="detail" data-id="${o.id}">Ver detalle</button>
@@ -2176,7 +2193,7 @@
         ${o.note?'<br>'+esc(o.note):''}
       </div>
       <div class="split-row" style="margin-bottom:4px;">
-        <span class="split-chip ${hwOk && (o.lines||[]).length ?'ok':''}">${(o.lines||[]).length ? `Hardware ${hwOk?'✓':'pendiente'}` : 'Sin hardware'}</span>
+        <span class="split-chip ${hwChipClass(o)}">${hwChipText(o)}</span>
         <span class="split-chip ${hasMat?matChipClass(o):''}">${hasMat?matChipText(o):'Sin materiales'}</span>
       </div>
       ${orderNotes(o).length ? `<details class="notes-box">
@@ -2199,7 +2216,7 @@
         const stock = p?p.qty:0, pend = Math.max(0,l.qtyRequested-l.qtyDone), after = stock-pend;
         const full = l.qtyDone>=l.qtyRequested;
         const oneTap = isOneTap(p);
-        return `<div class="order-line">
+        return `<div class="order-line ${hwWarehouse(o)?'whhw':''}">
           <div class="ol-qr" data-pid="${l.productId}"></div>
           <div class="ol-info">
             <div class="ol-sku">${esc(l.sku)}${oneTap?' <span style="font-size:10px;color:var(--in);font-family:var(--sans);">un toque</span>':''}</div>
@@ -2213,6 +2230,7 @@
               : `<button class="mini-btn" data-act="fulfill" data-pid="${l.productId}">−1</button>`)}
           </div></div>`;
       }).join('') +
+      (hwWarehouse(o) ? `<div style="font-size:11.5px;color:var(--text-dim);font-family:var(--mono);margin-bottom:6px;"><span style="color:var(--whhw)">Hardware entregado en el almacén</span> · marcado por ${esc(o.hwWarehouseBy||'—')}${o.hwWarehouseSlot?' #'+o.hwWarehouseSlot:''}. Falta marcarlo completado.</div>` : '') +
       (hasMat ? `<div class="block-title">Materiales (planchas)</div>` + o.materials.map(m=>{
         const miss = m.missing||0, got = Math.max(0, m.qty - miss);
         const wh = matWarehouse(o), okCol = wh ? 'var(--wh)' : 'var(--in)';
@@ -2261,7 +2279,7 @@
     document.getElementById('odScanBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
     document.getElementById('odHwBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
     document.getElementById('odMatBtn').style.display = (isDone||!hasMat||matOk) ? 'none' : 'block';
-    document.getElementById('odMatWhBtn').style.display = (isDone||!hasMat||matOk||matWarehouse(o)) ? 'none' : 'block';
+    document.getElementById('odMatWhBtn').style.display = (isDone || (!whCanMat(o) && !whCanHw(o))) ? 'none' : 'block';
     document.getElementById('odFinishBtn').style.display = isDone ? 'none' : 'block';
     document.getElementById('odEditBtn').style.display = (isAdmin() && !isDone) ? 'block' : 'none';
   }
@@ -2283,15 +2301,27 @@
     if(closed){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); }
     else { renderOrderDetail(); toast('Materiales completados', 'ok'); }
   });
-  document.getElementById('odMatWhBtn').addEventListener('click', async ()=>{
-    if(!state.detailOrderId) return;
-    if(!await askConfirm('Las planchas se marcarán como entregadas en el almacén y se verán en azul. La orden no se completa: cuando estén listas, márcalas completadas y pasarán a verde.', 'Entregadas en almacén')) return;
-    const o = state.orders.find(x=>x.id===state.detailOrderId);
-    await setOrderFlags(state.detailOrderId, {matWarehouse:true, matWarehouseAt:Date.now(),
-      matWarehouseBy: state.me?state.me.name:'sin identificar', matWarehouseSlot: state.me?state.me.slot:null});
-    await logEvent({kind:'evt', text:`Marcó las planchas entregadas en el almacén en ${(o&&o.job)||'una orden'}`});
-    renderOrderDetail(); renderOrdersList(); renderPlanchas(); toast('Planchas entregadas en el almacén', 'ok');
+  // se puede marcar en almacén lo que exista, no esté completado y no esté ya marcado
+  function whCanMat(o){ return hasMaterials(o) && !matComplete(o) && !matWarehouse(o); }
+  function whCanHw(o){ return (o.lines||[]).length>0 && !hwComplete(o) && !hwWarehouse(o); }
+  document.getElementById('odMatWhBtn').addEventListener('click', ()=>{
+    const o = state.orders.find(x=>x.id===state.detailOrderId); if(!o) return;
+    document.getElementById('whPickMat').style.display = whCanMat(o) ? 'block' : 'none';
+    document.getElementById('whPickHw').style.display = whCanHw(o) ? 'block' : 'none';
+    document.getElementById('modalWh').classList.remove('hidden');
   });
+  async function markWarehouse(kind){
+    document.getElementById('modalWh').classList.add('hidden');
+    const id = state.detailOrderId, o = state.orders.find(x=>x.id===id); if(!o) return;
+    const by = state.me?state.me.name:'sin identificar', slot = state.me?state.me.slot:null;
+    if(kind==='hw') await setOrderFlags(id, {hwWarehouse:true, hwWarehouseAt:Date.now(), hwWarehouseBy:by, hwWarehouseSlot:slot});
+    else await setOrderFlags(id, {matWarehouse:true, matWarehouseAt:Date.now(), matWarehouseBy:by, matWarehouseSlot:slot});
+    await logEvent({kind:'evt', text:`Marcó ${kind==='hw'?'el hardware':'las planchas'} entregado${kind==='hw'?'':'as'} en el almacén en ${o.job||'una orden'}`});
+    renderOrderDetail(); renderOrdersList(); renderPlanchas();
+    toast(kind==='hw' ? 'Hardware entregado en el almacén' : 'Planchas entregadas en el almacén', 'ok');
+  }
+  document.getElementById('whPickMat').addEventListener('click', ()=>markWarehouse('mat'));
+  document.getElementById('whPickHw').addEventListener('click', ()=>markWarehouse('hw'));
   document.getElementById('odFinishBtn').addEventListener('click', async ()=>{
     if(!state.detailOrderId) return;
     if(!await askConfirm('Hardware y materiales quedarán completados y la orden pasará al historial.', 'Completar orden')) return;
