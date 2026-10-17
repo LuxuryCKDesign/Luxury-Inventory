@@ -20,7 +20,7 @@
   :root{
     --bg:#1B1D21; --panel:#232629; --panel-alt:#2A2E32; --border:#3B3F45;
     --text:#ECE9E2; --text-dim:#93989E; --accent:#E4B23A; --accent-ink:#3A2E0C;
-    --in:#5F9E6F; --out:#C1543A; --price:#5B9BD5; --radius:5px; --gold:#D8BC84;
+    --in:#5F9E6F; --out:#C1543A; --price:#5B9BD5; --wh:#4C8DF0; --radius:5px; --gold:#D8BC84;
     --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',sans-serif;
   }
   *{box-sizing:border-box;}
@@ -228,6 +228,9 @@
   .split-row{display:flex;gap:8px;margin-top:8px;}
   .split-chip{flex:1;border:1px solid var(--border);border-radius:var(--radius);padding:7px 8px;font-size:11.5px;font-family:var(--mono);text-align:center;color:var(--text-dim);background:var(--panel-alt);}
   .split-chip.ok{color:var(--in);border-color:var(--in);}
+  .split-chip.wh{color:var(--wh);border-color:var(--wh);}
+  .mat-line.wh{border-left-color:var(--wh);}
+  .wh-btn{border-color:var(--wh) !important;color:var(--wh) !important;}
   .block-title{font-family:var(--mono);font-size:11.5px;color:var(--text-dim);margin:14px 0 8px;font-weight:600;}
 
   /* cálculo de precios */
@@ -359,7 +362,7 @@
         <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
       </div>
     </div>
-    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v25</span></div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v26</span></div>
     <div class="top-nav">
       <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
       <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
@@ -565,6 +568,7 @@
       <button class="primary-btn" id="odScanBtn">Escanear esta orden</button>
       <button class="secondary-btn" id="odHwBtn">Marcar hardware completado</button>
       <button class="secondary-btn" id="odMatBtn">Marcar materiales completados</button>
+      <button class="secondary-btn wh-btn" id="odMatWhBtn">Planchas entregadas en almacén</button>
       <button class="secondary-btn" id="odFinishBtn">Marcar todo como completado</button>
       <button class="secondary-btn" id="odEditBtn">Modificar orden (admin)</button>
       <button class="danger-btn" id="odDeleteBtn">Eliminar orden</button>
@@ -575,7 +579,7 @@
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 25 · cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 26 · en Órdenes, botón «Planchas entregadas en almacén» que completa las planchas y las marca en azul. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -2033,6 +2037,10 @@
   function hasMaterials(o){ return (o.materials||[]).length > 0; }
   function hwComplete(o){ return o.hwStatus==='completado' || o.lines.every(l=>l.qtyDone>=l.qtyRequested); }
   function matComplete(o){ return o.matStatus==='completado'; }
+  // planchas completadas porque se entregaron en el almacén (se muestran en azul en vez de verde)
+  function matWarehouse(o){ return matComplete(o) && o.matSource==='almacen'; }
+  function matChipClass(o){ return matWarehouse(o) ? 'wh' : (matComplete(o) ? 'ok' : ''); }
+  function matChipText(o){ return matWarehouse(o) ? 'Materiales ✓ almacén' : `Materiales ${matComplete(o)?'✓':'pendiente'}`; }
   function orderPct(o){
     if(hasMaterials(o)) return (hwComplete(o)?50:0) + (matComplete(o)?50:0);
     return hwComplete(o) ? 100 : (()=>{
@@ -2134,7 +2142,7 @@
         <div class="oc-meta"><span>${sinHw?'sin hardware asignado':`${done}/${req} despachados`}</span><span>${esc(o.createdBy||'—')}${o.createdSlot?' #'+o.createdSlot:''}</span></div>
         ${hasMat?`<div class="split-row">
           <span class="split-chip ${hwOk&&!sinHw?'ok':''}">${sinHw?'Sin hardware':`Hardware ${hwOk?'✓':'pendiente'}`}</span>
-          <span class="split-chip ${matOk?'ok':''}">Materiales ${matOk?'✓':'pendiente'}</span>
+          <span class="split-chip ${matChipClass(o)}">${matChipText(o)}</span>
         </div>`:''}
         <div class="oc-actions">
           <button data-act="detail" data-id="${o.id}">Ver detalle</button>
@@ -2168,7 +2176,7 @@
       </div>
       <div class="split-row" style="margin-bottom:4px;">
         <span class="split-chip ${hwOk && (o.lines||[]).length ?'ok':''}">${(o.lines||[]).length ? `Hardware ${hwOk?'✓':'pendiente'}` : 'Sin hardware'}</span>
-        <span class="split-chip ${matOk?'ok':''}">${hasMat?`Materiales ${matOk?'✓':'pendiente'}`:'Sin materiales'}</span>
+        <span class="split-chip ${hasMat?matChipClass(o):''}">${hasMat?matChipText(o):'Sin materiales'}</span>
       </div>
       ${orderNotes(o).length ? `<details class="notes-box">
         <summary>Ver notas disponibles (${orderNotes(o).length})</summary>
@@ -2206,16 +2214,17 @@
       }).join('') +
       (hasMat ? `<div class="block-title">Materiales (planchas)</div>` + o.materials.map(m=>{
         const miss = m.missing||0, got = Math.max(0, m.qty - miss);
+        const wh = matWarehouse(o), okCol = wh ? 'var(--wh)' : 'var(--in)';
         return `
-        <div class="mat-line" style="flex-wrap:wrap;">
+        <div class="mat-line ${wh?'wh':''}" style="flex-wrap:wrap;">
           <div class="ml-info">
             <div class="ml-title">${esc(matLabel(m))}</div>
             <div class="ml-sub">${m.tamano ? esc(m.tamano) : 'sin tamaño'}</div>
           </div>
-          <span class="ml-qty"><span style="color:var(--in)">${m.qty}</span>${miss?` <span style="color:var(--out)">− ${miss}</span>`:''}</span>
+          <span class="ml-qty"><span style="color:${okCol}">${m.qty}</span>${miss?` <span style="color:var(--out)">− ${miss}</span>`:''}</span>
           <div style="width:100%;display:flex;align-items:center;gap:8px;">
             <span style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);flex:1;">
-              ${miss ? `Entregadas <b style="color:var(--in)">${got}</b> · faltan <b style="color:var(--out)">${miss}</b>` : 'Completa, no falta ninguna'}
+              ${miss ? `Entregadas <b style="color:${okCol}">${got}</b> · faltan <b style="color:var(--out)">${miss}</b>` : (wh ? '<span style="color:var(--wh)">Entregada en el almacén</span>' : 'Completa, no falta ninguna')}
             </span>
             ${isDone?'':`<span style="font-size:11px;font-family:var(--mono);color:var(--text-dim);">faltan</span>
             <input class="mat-missing" type="number" min="0" max="${m.qty}" value="${miss}" data-mid="${m.id}"
@@ -2224,7 +2233,7 @@
         </div>`;
       }).join('') +
         `<div style="font-size:11.5px;color:var(--text-dim);font-family:var(--mono);margin-bottom:6px;">
-          ${matOk ? `Material marcado por ${esc(o.matCompletedBy||'—')}${o.matCompletedSlot?' #'+o.matCompletedSlot:''}` : 'El material no se escanea, solo se marca como entregado.'}
+          ${matOk ? `${matWarehouse(o)?'<span style="color:var(--wh)">Entregado en el almacén</span> · marcado':'Material marcado'} por ${esc(o.matCompletedBy||'—')}${o.matCompletedSlot?' #'+o.matCompletedSlot:''}` : 'El material no se escanea, solo se marca como entregado.'}
         </div>` : '');
     drawLineQrs(body);
     body.querySelectorAll('.mat-missing').forEach(inp=>inp.addEventListener('change', async ()=>{
@@ -2251,6 +2260,7 @@
     document.getElementById('odScanBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
     document.getElementById('odHwBtn').style.display = (isDone||hwOk) ? 'none' : 'block';
     document.getElementById('odMatBtn').style.display = (isDone||!hasMat||matOk) ? 'none' : 'block';
+    document.getElementById('odMatWhBtn').style.display = (isDone||!hasMat||matWarehouse(o)) ? 'none' : 'block';
     document.getElementById('odFinishBtn').style.display = isDone ? 'none' : 'block';
     document.getElementById('odEditBtn').style.display = (isAdmin() && !isDone) ? 'block' : 'none';
   }
@@ -2271,6 +2281,13 @@
     const closed = await markMaterialsDone(state.detailOrderId);
     if(closed){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); }
     else { renderOrderDetail(); toast('Materiales completados', 'ok'); }
+  });
+  document.getElementById('odMatWhBtn').addEventListener('click', async ()=>{
+    if(!state.detailOrderId) return;
+    if(!await askConfirm('Las planchas de esta orden quedarán completadas como entregadas en el almacén y se verán en azul.', 'Entregadas en almacén')) return;
+    const closed = await markMaterialsDone(state.detailOrderId, 'almacen');
+    if(closed){ document.getElementById('modalOrderDetail').classList.add('hidden'); showDone(); }
+    else { renderOrderDetail(); renderPlanchas(); toast('Planchas entregadas en el almacén', 'ok'); }
   });
   document.getElementById('odFinishBtn').addEventListener('click', async ()=>{
     if(!state.detailOrderId) return;
@@ -2351,11 +2368,12 @@
     return await maybeCloseOrder(orderId);
   }
 
-  async function markMaterialsDone(orderId){
+  async function markMaterialsDone(orderId, source){
     const o = state.orders.find(x=>x.id===orderId); if(!o) return false;
-    await setOrderFlags(orderId, {matStatus:'completado',
+    const almacen = source==='almacen';
+    await setOrderFlags(orderId, {matStatus:'completado', matSource: almacen ? 'almacen' : 'normal',
       matCompletedBy: state.me?state.me.name:'sin identificar', matCompletedSlot: state.me?state.me.slot:null, matCompletedAt:Date.now()});
-    await logEvent({kind:'evt', text:`Marcó el material completado en ${o.job||'una orden'}`});
+    await logEvent({kind:'evt', text: almacen ? `Marcó las planchas entregadas en el almacén en ${o.job||'una orden'}` : `Marcó el material completado en ${o.job||'una orden'}`});
     return await maybeCloseOrder(orderId);
   }
 
@@ -2731,12 +2749,13 @@
     box.innerHTML = list.map(o=>{
       const total = o.materials.reduce((a,m)=>a+m.qty,0);
       const faltan = o.materials.reduce((a,m)=>a+(m.missing||0),0);
-      return `<div class="order-card" style="border-left:3px solid #7C93C4;">
+      const wh = matWarehouse(o), okCol = wh ? 'var(--wh)' : 'var(--in)';
+      return `<div class="order-card" style="border-left:3px solid ${wh?'var(--wh)':'#7C93C4'};">
         <div class="oc-top">
           <span class="oc-job">${esc(o.job||'Sin nombre')}</span>
-          <span class="order-status" style="${o.matStatus==='completado'?'color:var(--in)':''}">${o.matStatus==='completado'?'material listo':'material pendiente'}</span>
+          <span class="order-status" style="${o.matStatus==='completado'?'color:'+okCol:''}">${wh?'entregado en almacén':(o.matStatus==='completado'?'material listo':'material pendiente')}</span>
         </div>
-        <div class="oc-meta"><span><span style="color:var(--in)">${total}</span> planchas${faltan?` · <span style="color:var(--out)">faltan ${faltan}</span>`:''}</span><span>${o.status==='completado'?'orden completada':''}</span></div>
+        <div class="oc-meta"><span><span style="color:${okCol}">${total}</span> planchas${faltan?` · <span style="color:var(--out)">faltan ${faltan}</span>`:''}</span><span>${o.status==='completado'?'orden completada':''}</span></div>
         <div class="oc-actions"><button data-act="detail" data-id="${o.id}">Ver la orden</button></div>
       </div>`;
     }).join('');
