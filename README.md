@@ -1,4 +1,29 @@
 # Luxury-Inventory
+
+## Taller: piezas de Luxury Design (v30)
+
+- Luxury Design manda las piezas de cada trabajo (Gabinetes → Luxury Inventory → «Mandar las piezas al taller»).
+  Cada etiqueta que imprime lleva un QR `LD|<trabajo>|<pieza>|<número>`.
+- **Escanear → Piezas del taller**: se elige la estación **Corte**, **Canto** o **Armado** (se recuerda en cada teléfono) y
+  se escanean los QR. Corte marca la pieza cortada; Canto, el canto puesto (si la pieza no lleva canto, no marca nada);
+  Armado muestra la lista del mueble y el botón «Mueble armado». En cada pieza: «Dañada / perdida» (con el motivo),
+  «Deshacer» y «Quitar marca de dañada». Las dañadas pasan solas al Remake Bin de Luxury Design.
+- Debajo de la cámara, «Trabajos en el taller» muestra cómo va cada trabajo (listas, armados, dañadas) y su detalle por
+  mueble. En Órdenes, el detalle de la orden muestra una línea del taller si el trabajo se llama igual.
+- Datos en `kardex_store`: `ld:jobs`, `ld:parts:<trabajo>` (los escribe Luxury Design) y `ld:scan:<trabajo>:<teléfono>`
+  (cada teléfono escribe solo la suya: dos teléfonos nunca se pisan). `ld:done:<trabajo>` existe mientras todas las piezas
+  estén listas y `ld:armado:<trabajo>` mientras todos los muebles estén armados (para los avisos).
+- La lógica es la misma de Luxury Design: `ld-produccion.js` se genera allá con `npm run produccion:js` (no editar a mano).
+
+## Notificaciones push (v30)
+
+- Ajustes → «Notificaciones de este teléfono»: Activar, «Silenciar todas» y por tipo (trabajo nuevo, orden completada,
+  piezas listas en el taller, trabajo armado), «Enviar una de prueba» y Desactivar.
+- En iPhone funcionan con la app agregada a la pantalla de inicio (Safari → Compartir → Agregar a inicio), iOS 16.4 o más.
+- `sw.js` solo muestra los avisos (no guarda nada en caché). Los avisos los manda la función `ld-push` de Supabase:
+  el código y cómo instalarla (una sola vez) están en [`supabase/LEEME.md`](supabase/LEEME.md). La llave pública la da
+  la función; mientras no esté instalada, el teléfono queda listo y se activa solo cuando lo esté.
+
 <!DOCTYPE html> <html lang="es"> <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1f2937">
 <meta name="apple-mobile-web-app-capable" content="yes">

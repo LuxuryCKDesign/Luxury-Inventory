@@ -12,6 +12,8 @@
 <link rel="apple-touch-icon" href="icon-512.png">
 <link rel="icon" type="image/png" href="icon-512.png">
   <script src="supabase-storage.js"></script>
+  <script src="ld-produccion.js"></script>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -256,6 +258,74 @@
   .lock-note{font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-bottom:14px;}
 
   /* remanentes: lectura de etiquetas Remnant */
+  /* ---- taller: piezas de Luxury Design ---- */
+  .scan-kind{margin-bottom:10px;}
+  .scan-wrap.piezas-mode{aspect-ratio:4/3;min-height:0;}
+  .scan-wrap.piezas-mode .scan-frame{top:12%;bottom:12%;left:24%;right:24%;}
+  .station-seg{margin:10px 0 0;}
+  .station-seg button{padding:11px 4px;font-size:13.5px;}
+  .pc-card{background:var(--panel);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:var(--radius);padding:13px 14px;margin-top:12px;}
+  .pc-card.ok{border-left-color:var(--in);}
+  .pc-card.warn{border-left-color:var(--accent);}
+  .pc-card.bad{border-left-color:var(--out);}
+  .pc-did{font-size:19px;font-weight:700;margin-bottom:6px;line-height:1.25;}
+  .pc-card.ok .pc-did{color:var(--in);}
+  .pc-card.warn .pc-did{color:var(--accent);}
+  .pc-card.bad .pc-did{color:var(--out);}
+  .pc-job{font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:4px;}
+  .pc-cab{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);}
+  .pc-part{font-size:15px;font-weight:600;margin:3px 0 2px;}
+  .pc-meta{font-size:12px;color:var(--text-dim);font-family:var(--mono);margin-bottom:8px;line-height:1.5;}
+  .pc-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+  .pc-chip{font-size:11.5px;font-family:var(--mono);padding:3px 8px;border-radius:20px;border:1px solid var(--border);color:var(--text-dim);}
+  .pc-chip.on{border-color:var(--in);color:var(--in);}
+  .pc-chip.bad{border-color:var(--out);color:var(--out);}
+  .pc-chip.warn{border-color:var(--accent);color:var(--accent);}
+  .pc-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .pc-actions button{flex:1 1 40%;min-height:44px;border:1px solid var(--border);background:var(--panel-alt);color:var(--text);border-radius:var(--radius);padding:9px 8px;font-size:13px;font-weight:600;}
+  .pc-actions button.primary{background:var(--in);border-color:var(--in);color:#0f2013;font-size:15px;}
+  .pc-actions button.danger{border-color:var(--out);color:var(--out);background:none;}
+  .pc-list{list-style:none;margin:0 0 10px;padding:0;font-size:13px;}
+  .pc-list li{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);}
+  .pc-list li:last-child{border-bottom:none;}
+  .pc-list .k{font-family:var(--mono);color:var(--text-dim);flex:none;}
+  .pc-list .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .taller-zone{margin-top:18px;}
+  .taller-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;}
+  .taller-head .block-title{margin:0;}
+  .tj-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:11px 12px;margin-bottom:8px;width:100%;text-align:left;color:var(--text);display:block;}
+  .tj-card.done{border-left:3px solid var(--in);}
+  .tj-name{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);}
+  .tj-client{font-size:12px;color:var(--text-dim);margin-bottom:6px;}
+  .tj-row{display:flex;align-items:center;gap:8px;font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-top:4px;}
+  .tj-row .progress-bar{flex:1;margin:0;}
+  .tj-row .lbl{width:74px;flex:none;}
+  .tj-row .num{width:52px;text-align:right;flex:none;color:var(--text);}
+  .progress-fill.green{background:var(--in);}
+  .tj-dmg{color:var(--out);font-family:var(--mono);font-size:11.5px;margin-top:5px;}
+  .tc-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;}
+  .tc-card.ready{border-left:3px solid var(--accent);}
+  .tc-card.built{border-left:3px solid var(--in);}
+  .tc-card.dmg{border-left:3px solid var(--out);}
+  .tc-card summary{list-style:none;padding:10px 12px;cursor:pointer;}
+  .tc-card summary::-webkit-details-marker{display:none;}
+  .tc-top{display:flex;justify-content:space-between;gap:8px;align-items:center;}
+  .tc-body{padding:0 12px 12px;}
+  .back-link{background:none;border:none;color:var(--accent);font-size:13px;font-weight:600;padding:6px 0;margin-bottom:6px;}
+  .od-taller{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);padding:9px 11px;margin:10px 0 4px;font-size:12.5px;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .od-taller button{flex:none;border:1px solid var(--accent);background:none;color:var(--accent);border-radius:var(--radius);padding:7px 10px;font-size:12px;font-weight:600;}
+  /* ---- notificaciones ---- */
+  .push-box{border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);padding:10px 12px;font-size:12.5px;line-height:1.55;}
+  .push-box p{margin:0 0 8px;color:var(--text-dim);}
+  .push-box .push-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;margin:0;border-bottom:1px solid var(--border);font-family:var(--sans);font-size:13.5px;color:var(--text);}
+  .push-box .push-row input{-webkit-appearance:none;appearance:none;width:44px;height:26px;flex:none;margin:0;padding:0;border-radius:13px;background:var(--panel-alt);border:1px solid var(--border);position:relative;cursor:pointer;transition:background .15s;}
+  .push-box .push-row input::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--text-dim);transition:transform .15s,background .15s;}
+  .push-box .push-row input:checked{background:var(--accent);border-color:var(--accent);}
+  .push-box .push-row input:checked::after{transform:translateX(18px);background:var(--accent-ink);}
+  .push-box .push-row input:disabled{opacity:.45;cursor:default;}
+  .push-box .push-row.master{font-weight:700;}
+  .push-note{font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-top:6px;}
+  .push-note.warn{color:var(--accent);}
   .scan-wrap.label-mode .scan-frame{top:50%;bottom:auto;left:6%;right:6%;aspect-ratio:2.5/1;transform:translateY(-50%);transition:border-color .2s;}
   .scan-frame.hit{border-color:var(--in);}
   .scan-frame.hit::before{background:var(--in);}
@@ -366,7 +436,7 @@
         <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
       </div>
     </div>
-    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v29</span></div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v30</span></div>
     <div class="top-nav">
       <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
       <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
@@ -387,6 +457,10 @@
 
   <div class="view hidden" id="view-escanear">
     <div id="activeOrderBanner"></div>
+    <div class="segmented scan-kind" id="scanKindSeg">
+      <button data-kind="rem">Remanentes</button>
+      <button data-kind="piezas">Piezas del taller</button>
+    </div>
     <div class="scan-wrap label-mode" id="scanWrap">
       <div class="scan-placeholder" id="scanPlaceholder">Preparando la cámara…</div>
       <video id="scanVideo" playsinline webkit-playsinline autoplay muted style="display:none;"></video>
@@ -403,7 +477,13 @@
       <input id="manualSkuInput" placeholder="O escribe el SKU manualmente">
       <button id="manualSkuBtn">Buscar</button>
     </div>
+    <div class="segmented station-seg" id="stationSeg" style="display:none;">
+      <button data-station="corte">Corte</button>
+      <button data-station="canto">Canto</button>
+      <button data-station="armado">Armado</button>
+    </div>
     <div id="scanResultZone"></div>
+    <div class="taller-zone" id="tallerZone" style="display:none;"></div>
   </div>
 
   <div class="view hidden" id="view-ordenes">
@@ -579,11 +659,28 @@
     </div>
   </div>
 
+  <div class="overlay hidden" id="modalDmg">
+    <div class="modal">
+      <div class="modal-title"><span>Pieza dañada o perdida</span><button class="icon-btn" data-close="modalDmg">✕</button></div>
+      <div id="dmgPart" style="font-size:13px;margin-bottom:10px;line-height:1.5;"></div>
+      <div class="chips" id="dmgChips">
+        <button class="chip" data-reason="Rayada">Rayada</button>
+        <button class="chip" data-reason="Mal cortada">Mal cortada</button>
+        <button class="chip" data-reason="Se quebró">Se quebró</button>
+        <button class="chip" data-reason="Canto malo">Canto malo</button>
+        <button class="chip" data-reason="Perdida">Perdida</button>
+      </div>
+      <div class="field"><label>Por qué (opcional)</label><input id="dmgReason" placeholder="Ej. se rayó al cargarla" maxlength="120"></div>
+      <p style="font-size:12px;color:var(--text-dim);line-height:1.5;margin:0 0 6px;">Se vuelve a cortar: en Luxury Design pasa sola al Remake Bin. El mueble queda incompleto hasta escanear la pieza nueva.</p>
+      <button class="danger-btn" id="dmgSaveBtn" style="margin-top:4px;">Marcar dañada / perdida</button>
+    </div>
+  </div>
+
   <div class="overlay hidden" id="modalSettings">
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 28 · en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 30 · Escanear → «Piezas del taller»: el QR de cada etiqueta de Luxury Design marca la pieza cortada, con canto o dañada, y cada mueble armado; abajo se ve cómo va cada trabajo. Notificaciones push por teléfono (trabajo nuevo, orden completada, piezas listas, trabajo armado), con silencio.<br>Antes: en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -593,6 +690,8 @@
         <div class="field" style="flex:2;"><label>Nombre</label><input id="newSectionLabel" placeholder="Bisagras"></div>
       </div>
       <button class="secondary-btn" id="addSectionBtn">+ Añadir sección</button>
+
+      <div class="field" style="margin-top:20px;"><label>Notificaciones de este teléfono</label><div id="pushBox" class="push-box"></div></div>
 
       <div class="field" style="margin-top:20px;"><label>Respaldo de datos</label>
         <div id="backupInfo" style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);line-height:1.6;margin-bottom:10px;"></div>
@@ -774,6 +873,8 @@
     remSearch:'', remFilter:null
   };
   let videoStream=null, rafId=null, draftLines=[], entryLines=[];
+  // Escanear: "rem" = etiquetas Remnant (lo de siempre) · "piezas" = QR de las piezas de Luxury Design (taller)
+  let scanKind = (()=>{ try{ return localStorage.getItem('ld-scan-kind') === 'piezas' ? 'piezas' : 'rem'; }catch(e){ return 'rem'; } })();
 
   /* ============ CAPA DE NUBE (reintentos + cola) ============ */
   const sleep = (ms)=>new Promise(r=>setTimeout(r, ms));
@@ -1143,7 +1244,8 @@
       const rv = rev && rev.t ? rev.t : 0;
       if(!force && lastSignature && rv === lastRev){ idleRounds++; markSynced(false); return; }
 
-      // 2) solo si cambió, baja todo
+      // 2) solo si cambió, baja todo (y lo del taller si se está escaneando piezas)
+      if(state.activeTab === 'escanear' && scanMode() === 'piezas') tallerOnRev();
       const [products, orders, history, sections, team, entries, remnants] = await Promise.all([
         sGet(STORE.PRODUCTS, true, state.products), sGet(STORE.ORDERS, true, state.orders),
         sGet(STORE.HISTORY, true, state.history), sGet(STORE.SECTIONS, true, state.sections),
@@ -1229,7 +1331,7 @@
     updateSlotPill();
     const t = state.activeTab;
     if(t==='inventario'){ renderSectionChips(); renderProductList(); }
-    else if(t==='escanear'){ renderActiveOrderBanner(); }
+    else if(t==='escanear'){ renderActiveOrderBanner(); if(scanMode()==='piezas') renderTaller(); }
     else if(t==='ordenes'){ renderOrdersList(); }
     else if(t==='entradas'){ renderEntriesList(); }
     else if(t==='planchas'){ renderPlanchas(); }
@@ -1484,19 +1586,35 @@
   camToggleBtn.addEventListener('click', ()=>{ state.cameraOn ? stopCamera() : startCamera(); });
   let camStarting = false, lastScanMode = null;
 
-  function scanMode(){ return state.activeOrderId ? 'qr' : 'label'; }
+  /* qr = despachando una orden · piezas = QR de las piezas del taller · label = etiquetas Remnant */
+  function scanMode(){ return state.activeOrderId ? 'qr' : (scanKind === 'piezas' ? 'piezas' : 'label'); }
+  function qrLoopMode(){ const m = scanMode(); return m === 'qr' || m === 'piezas'; }
 
   function refreshScanMode(){
-    const mode = scanMode(), label = mode === 'label';
+    const mode = scanMode(), label = mode === 'label', piezas = mode === 'piezas';
     document.getElementById('scanWrap').classList.toggle('label-mode', label);
+    document.getElementById('scanWrap').classList.toggle('piezas-mode', piezas);
     document.getElementById('remActions').style.display = label ? 'flex' : 'none';
-    document.getElementById('manualRow').style.display = label ? 'none' : 'flex';
-    if(mode !== lastScanMode){
+    document.getElementById('manualRow').style.display = mode === 'qr' ? 'flex' : 'none';
+    const seg = document.getElementById('scanKindSeg');
+    seg.style.display = state.activeOrderId ? 'none' : 'flex';
+    seg.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.kind === (piezas ? 'piezas' : 'rem')));
+    document.getElementById('stationSeg').style.display = piezas ? 'flex' : 'none';
+    document.getElementById('tallerZone').style.display = piezas ? 'block' : 'none';
+    const changed = mode !== lastScanMode;
+    if(changed){
       // al entrar a despachar se limpia; al terminar se deja a la vista lo último despachado
       if(!label || lastScanMode === null) document.getElementById('scanResultZone').innerHTML = '';
       lastScanMode = mode;
+      if(piezas){ renderStationSeg(); renderTaller(); loadTaller(false).then(renderTaller); }
     }
-    if(!label) document.getElementById('scanStatus').classList.add('hidden');
+    if(mode === 'qr') document.getElementById('scanStatus').classList.add('hidden');
+    if(piezas){
+      // la guía solo al entrar: después ahí se muestra lo último escaneado
+      const st = document.getElementById('scanStatus');
+      if(!state.cameraOn) st.classList.add('hidden');
+      else if(changed || st.classList.contains('hidden')) setScanStatus('Apunta al QR de la etiqueta de la pieza.');
+    }
     if(!state.cameraOn) return;
     if(label){
       if(rafId){ cancelAnimationFrame(rafId); rafId = null; }
@@ -1505,6 +1623,13 @@
       rafId = requestAnimationFrame(scanLoop);
     }
   }
+  document.querySelectorAll('#scanKindSeg button').forEach(b=>b.addEventListener('click', ()=>{
+    if(state.activeOrderId) return;
+    scanKind = b.dataset.kind === 'piezas' ? 'piezas' : 'rem';
+    try{ localStorage.setItem('ld-scan-kind', scanKind); }catch(e){}
+    document.getElementById('scanResultZone').innerHTML = '';
+    refreshScanMode();
+  }));
 
   async function startCamera(){
     if(camStarting || state.cameraOn) return;
@@ -1562,9 +1687,11 @@
   const scanCtx = scanCanvas.getContext('2d',{willReadFrequently:true});
   function scanLoop(){
     rafId = null;
-    if(!state.cameraOn || scanMode() !== 'qr') return;
+    if(!state.cameraOn || !qrLoopMode()) return;
     const video = document.getElementById('scanVideo');
-    if(video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth){
+    // en el taller no se lee nada con una ventana abierta (por ejemplo, la de pieza dañada)
+    const paused = scanMode() === 'piezas' && document.querySelector('.overlay:not(.hidden)');
+    if(!paused && video.readyState === video.HAVE_ENOUGH_DATA && video.videoWidth){
       // se reduce el cuadro para que el QR se busque rápido aunque la cámara esté en alta resolución
       const k = Math.min(1, 960 / Math.max(video.videoWidth, video.videoHeight));
       const w = Math.round(video.videoWidth*k), h = Math.round(video.videoHeight*k);
@@ -1577,11 +1704,12 @@
         const now = Date.now();
         if(code.data !== state.lastScanCode || now - state.lastScanAt > 2200){
           state.lastScanCode = code.data; state.lastScanAt = now;
-          handleScanned(code.data.trim());
+          if(scanMode() === 'piezas') handlePieceQr(code.data.trim());
+          else handleScanned(code.data.trim());
         }
       }
     }
-    if(state.cameraOn && scanMode() === 'qr') rafId = requestAnimationFrame(scanLoop);
+    if(state.cameraOn && qrLoopMode()) rafId = requestAnimationFrame(scanLoop);
   }
 
   /* ============ ETIQUETAS REMNANT ============ */
@@ -2040,6 +2168,632 @@
     document.getElementById('srOutBtn').addEventListener('click', async ()=>{ await adjustQty(product.id,-1,null,'escaneo'); handleScanned(raw); });
   }
 
+  /* ============ TALLER: piezas de Luxury Design ============
+     Luxury Design manda las piezas de cada trabajo (ld:parts:<trabajo>) y la lista ld:jobs. Cada etiqueta lleva un
+     QR "LD|<trabajo>|<pieza>|<número>". Aquí se escanea en tres estaciones: Corte, Canto y Armado (por mueble).
+     Cada teléfono escribe solo su propia clave ld:scan:<trabajo>:<equipo>, así dos teléfonos nunca se pisan.
+     La lógica (qué marca cada escaneo, cómo va cada mueble) es la misma de Luxury Design: ld-produccion.js. */
+  const LDP = window.LDProd || null;
+  function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+  function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
+  const tallerDev = (()=>{ let d = lsGet('ld-device'); if(!d){ d = 'd' + uid(); lsSet('ld-device', d); } return d; })();
+  const STATIONS = {corte:'Corte', canto:'Canto', armado:'Armado'};
+  const taller = {
+    jobs: [],           // ld:jobs
+    manifests: {},      // trabajo → piezas y muebles
+    logs: {},           // trabajo → {equipo: escaneos}
+    logsAt: {},         // trabajo → cuándo se leyeron sus escaneos
+    loadedAt: 0, loading: null, error: null,
+    view: null,         // trabajo abierto en el detalle (null = la lista)
+    openCabs: new Set(),
+    showDone: false,
+    station: STATIONS[lsGet('ld-station')] ? lsGet('ld-station') : 'corte',
+    last: null,         // lo último escaneado: {jobId, uid, ev, why, remake, err}
+    markerTimers: {}
+  };
+
+  function fmtIn(v){
+    const n = Number(v); if(!isFinite(n)) return '—';
+    const neg = n < 0, a = Math.abs(n);
+    let whole = Math.floor(a), six = Math.round((a - whole) * 16);
+    if(six === 16){ whole += 1; six = 0; }
+    let frac = '';
+    if(six){ let num = six, den = 16; while(num % 2 === 0){ num /= 2; den /= 2; } frac = `${num}/${den}`; }
+    return (neg ? '-' : '') + (whole ? String(whole) : (frac ? '' : '0')) + (frac ? (whole ? ' ' : '') + frac : '') + '"';
+  }
+  const fmtWhen = (t)=> t ? new Date(t).toLocaleString('es',{dateStyle:'short', timeStyle:'short'}) : '—';
+  const looseName = (s)=> String(s||'').trim().toLowerCase().replace(/\s+/g,' ');
+  const sameEv = (a, b)=> a.t === b.t && a.s === b.s && (a.p||'') === (b.p||'') && (a.c||'') === (b.c||'') && !!a.o === !!b.o;
+
+  function progressOf(jobId){
+    const man = taller.manifests[jobId];
+    if(!LDP || !man) return null;
+    return LDP.jobProgress(man, Object.values(taller.logs[jobId] || {}));
+  }
+  function realCabs(man){ return man ? man.cabinets.length : 0; }
+  function findTallerJob(name){
+    const k = looseName(name);
+    return k ? taller.jobs.find(j=>looseName(j.job) === k) || null : null;
+  }
+
+  /* --- lectura --- */
+  function splitScanKey(key){
+    const rest = key.slice('ld:scan:'.length), i = rest.lastIndexOf(':');
+    return i > 0 ? {jobId: rest.slice(0, i), dev: rest.slice(i + 1)} : null;
+  }
+  // lo propio que todavía se está guardando manda sobre lo que se leyó
+  function keepMine(jobId, logs){
+    const mine = taller.logs[jobId] && taller.logs[jobId][tallerDev];
+    if(mine && keyBusy(LDP.scanKey(jobId, tallerDev))) logs[tallerDev] = mine;
+    return logs;
+  }
+  async function loadManifest(jobId, force){
+    if(!force && taller.manifests[jobId]) return taller.manifests[jobId];
+    const raw = await sGet(LDP.partsKey(jobId), true, null);
+    const m = LDP.asManifest(raw);
+    if(m) taller.manifests[jobId] = m;
+    return m || taller.manifests[jobId] || null;
+  }
+  async function loadJobLogs(jobId){
+    try{
+      const rows = await window.storage.listValues(LDP.scanPrefix(jobId));
+      const logs = {};
+      for(const r of rows){
+        const k = splitScanKey(r.key); if(!k || k.jobId !== jobId) continue;
+        const lg = LDP.asScanLog(r.value); if(lg) logs[k.dev] = lg;
+      }
+      taller.logs[jobId] = keepMine(jobId, logs);
+      taller.logsAt[jobId] = Date.now();
+      return true;
+    }catch(e){ return false; }
+  }
+  /* Todo el taller: la lista de trabajos, las piezas que cambiaron y todos los escaneos (en 2 o 3 consultas). */
+  function loadTaller(force){
+    if(!LDP || !window.storage || !window.storage.listValues) return Promise.resolve();
+    if(taller.loading) return taller.loading;
+    if(!force && Date.now() - taller.loadedAt < 1500) return Promise.resolve();
+    taller.loading = (async ()=>{
+      try{
+        const [jobs, scans] = await Promise.all([sGet(LDP.KEY_JOBS, true, []), window.storage.listValues('ld:scan:')]);
+        taller.jobs = (Array.isArray(jobs) ? jobs : []).filter(j=>j && typeof j.jobId === 'string');
+        // las piezas solo se vuelven a bajar si Luxury Design las mandó de nuevo
+        const stale = taller.jobs.filter(j=>!taller.manifests[j.jobId] || taller.manifests[j.jobId].at !== j.at);
+        await Promise.all(stale.map(j=>loadManifest(j.jobId, true)));
+        const byJob = {};
+        for(const r of scans){
+          const k = splitScanKey(r.key); if(!k) continue;
+          const lg = LDP.asScanLog(r.value); if(!lg) continue;
+          (byJob[k.jobId] = byJob[k.jobId] || {})[k.dev] = lg;
+        }
+        const now = Date.now();
+        for(const jobId of new Set([...Object.keys(byJob), ...Object.keys(taller.logs)])){
+          taller.logs[jobId] = keepMine(jobId, byJob[jobId] || {});
+          taller.logsAt[jobId] = now;
+        }
+        taller.loadedAt = now; taller.error = null;
+      }catch(e){ taller.error = 'net'; }
+      finally{ taller.loading = null; }
+    })();
+    return taller.loading;
+  }
+  /* Alguien cambió algo (kardex:rev): se releen los escaneos del trabajo a la vista; la lista cada 30 s. */
+  let tallerRevBusy = false;
+  async function tallerOnRev(){
+    if(tallerRevBusy) return;
+    tallerRevBusy = true;
+    try{
+      const jobId = taller.view || (taller.last && taller.last.jobId);
+      if(jobId) await loadJobLogs(jobId);
+      if(Date.now() - taller.loadedAt > 30000) await loadTaller(false);
+      renderTaller(); renderLastPiece();
+    }finally{ tallerRevBusy = false; }
+  }
+
+  /* --- escritura (solo la clave de este teléfono) --- */
+  async function addTallerEvent(jobId, ev){
+    ev.t = Date.now();
+    if(state.me) ev.w = state.me.name;
+    const key = LDP.scanKey(jobId, tallerDev);
+    taller.logs[jobId] = taller.logs[jobId] || {};
+    taller.logs[jobId][tallerDev] = LDP.appendEvent(taller.logs[jobId][tallerDev], tallerDev, ev);   // al instante
+    renderLastPiece(); renderTaller();
+    const res = await mutateShared(key, (cur)=>{
+      const lg = LDP.asScanLog(cur);
+      if(lg && lg.ev.some(e=>sameEv(e, ev))) return lg;   // un reintento no lo duplica
+      return LDP.appendEvent(lg, tallerDev, ev);
+    }, null);
+    if(res && res.ok){
+      taller.logs[jobId][tallerDev] = LDP.asScanLog(res.next);
+      scheduleMarkers(jobId);
+      return true;
+    }
+    // no se guardó: se quita para no mostrar algo que no quedó
+    const mine = taller.logs[jobId][tallerDev];
+    if(mine) taller.logs[jobId][tallerDev] = {...mine, ev: mine.ev.filter(e=>!sameEv(e, ev))};
+    if(taller.last && taller.last.ev && sameEv(taller.last.ev, ev)) taller.last = {...taller.last, err:true};
+    renderLastPiece(); renderTaller();
+    return false;
+  }
+  async function removeTallerEvent(jobId, ev){
+    const key = LDP.scanKey(jobId, tallerDev);
+    const mine = taller.logs[jobId] && taller.logs[jobId][tallerDev];
+    if(mine) taller.logs[jobId][tallerDev] = {...mine, ev: mine.ev.filter(e=>!sameEv(e, ev))};
+    renderLastPiece(); renderTaller();
+    const res = await mutateShared(key, (cur)=>{
+      const lg = LDP.asScanLog(cur) || {v:1, dev:tallerDev, ev:[]};
+      return {...lg, ev: lg.ev.filter(e=>!sameEv(e, ev))};
+    }, null);
+    if(res && res.ok){ taller.logs[jobId][tallerDev] = LDP.asScanLog(res.next); scheduleMarkers(jobId); }
+    renderLastPiece(); renderTaller();
+    return !!(res && res.ok);
+  }
+
+  /* --- marcas para las notificaciones: existen mientras el trabajo esté listo / armado --- */
+  function scheduleMarkers(jobId){
+    clearTimeout(taller.markerTimers[jobId]);
+    taller.markerTimers[jobId] = setTimeout(()=>{ checkMarkers(jobId); }, 1500);
+  }
+  async function checkMarkers(jobId){
+    const man = taller.manifests[jobId]; if(!man) return;
+    if(!(await loadJobLogs(jobId))) return;     // sin red: se revisa con el próximo escaneo
+    const pr = progressOf(jobId); if(!pr) return;
+    await syncMarker(LDP.doneKey(jobId), pr.partsDone, man);
+    await syncMarker(LDP.builtKey(jobId), pr.allBuilt, man);
+    renderTaller();
+  }
+  async function syncMarker(key, on, man){
+    let exists;
+    try{ const r = await window.storage.get(key, true); exists = !!(r && r.value); }catch(e){ return; }
+    try{
+      if(on && !exists) await window.storage.set(key, JSON.stringify({t:Date.now(), job:man.job, jobId:man.jobId, client:man.client||'', by: state.me ? state.me.name : ''}), true);
+      else if(!on && exists) await window.storage.delete(key, true);
+    }catch(e){}
+  }
+
+  /* --- escanear una pieza --- */
+  function feedback(kind){
+    try{ if(navigator.vibrate) navigator.vibrate(kind === 'ok' ? 60 : [40, 60, 40]); }catch(e){}
+    const f = document.getElementById('scanFrame');
+    if(f){ f.classList.add('hit'); setTimeout(()=>f.classList.remove('hit'), 500); }
+  }
+  function pieceMsg(cls, title, text){
+    taller.last = null;
+    if(state.cameraOn) setScanStatus(title, cls === 'bad' ? 'err' : '');
+    document.getElementById('scanResultZone').innerHTML = `<div class="pc-card ${cls}"><div class="pc-did">${esc(title)}</div>${text ? `<div class="pc-meta" style="font-family:var(--sans);font-size:13px;">${esc(text)}</div>` : ''}</div>`;
+  }
+  async function handlePieceQr(raw){
+    if(!LDP){ pieceMsg('bad', 'No se pudo cargar el taller', 'Recarga la página.'); return; }
+    const q = LDP.parseLabelQr(raw);
+    if(!q){
+      const product = resolveScan(raw);
+      pieceMsg('bad', 'No es una etiqueta de pieza', product ? `Es el QR del producto ${product.sku}. Para sacarlo de una orden usa «Escanear esta orden» en Órdenes.` : 'Este QR no es de una etiqueta de Luxury Design.');
+      feedback('bad'); return;
+    }
+    let man = taller.manifests[q.jobId];
+    if(!man){ pieceMsg('warn', 'Buscando la pieza…', ''); man = await loadManifest(q.jobId, true); }
+    if(!man){ pieceMsg('bad', 'Trabajo sin mandar', 'Este trabajo no se ha mandado al taller desde Luxury Design.'); feedback('bad'); return; }
+    let part = man.parts.find(p=>p.u === q.uid);
+    if(!part){ man = await loadManifest(q.jobId, true); part = man && man.parts.find(p=>p.u === q.uid); }
+    if(!part){ pieceMsg('bad', 'Esta pieza ya no está en el diseño', 'Se cambió el diseño; imprime las etiquetas nuevas.'); feedback('bad'); return; }
+    if(!taller.logsAt[q.jobId] || Date.now() - taller.logsAt[q.jobId] > 5000) await loadJobLogs(q.jobId);
+    if(!taller.jobs.some(j=>j.jobId === q.jobId)) loadTaller(true).then(renderTaller);
+    const st = progressOf(q.jobId).parts[part.u];
+    if(taller.station === 'armado'){
+      taller.last = {jobId:q.jobId, uid:part.u, ev:null, why:'armado', remake:q.remake};
+      renderLastPiece(); feedback('ok'); return;
+    }
+    const r = LDP.stepForStation(taller.station, part, st);
+    if(!r.step){
+      taller.last = {jobId:q.jobId, uid:part.u, ev:null, why:r.why, remake:q.remake};
+      renderLastPiece(); feedback(r.why === 'already' ? 'ok' : 'bad'); return;
+    }
+    const ev = {s:r.step, p:part.u};
+    taller.last = {jobId:q.jobId, uid:part.u, ev, remake:q.remake};
+    feedback('ok');
+    await addTallerEvent(q.jobId, ev);
+  }
+
+  function partChips(p, st){
+    st = st || {};
+    const chips = [];
+    if(st.dmg) chips.push(`<span class="pc-chip bad">Dañada${st.dmgNote ? ': ' + esc(st.dmgNote) : ''}</span>`);
+    chips.push(st.cut ? '<span class="pc-chip on">Cortada ✓</span>' : '<span class="pc-chip">Por cortar</span>');
+    if(p.eb) chips.push(st.eb ? '<span class="pc-chip on">Canto ✓</span>' : '<span class="pc-chip">Falta canto</span>');
+    else chips.push('<span class="pc-chip">Sin canto</span>');
+    if(LDP.partReady(p, st)) chips.push('<span class="pc-chip on">Lista</span>');
+    return chips.join('');
+  }
+  function partLine(p, st){
+    st = st || {};
+    const chip = st.dmg ? `<span class="pc-chip bad">${st.dmgNote ? 'Dañada: ' + esc(st.dmgNote) : 'Dañada'}</span>`
+      : LDP.partReady(p, st) ? '<span class="pc-chip on">Lista</span>'
+      : st.cut ? '<span class="pc-chip warn">Falta canto</span>' : '<span class="pc-chip">Por cortar</span>';
+    return `<li><span class="k">#${esc(p.k)}</span><span class="n">${esc(p.n)}</span>${chip}</li>`;
+  }
+  function cabinetChecklist(jobId, cabId){
+    const man = taller.manifests[jobId], pr = progressOf(jobId);
+    const cab = pr.cabinets.find(c=>c.c === cabId);
+    if(!cab) return '';
+    const parts = man.parts.filter(p=>p.c === cabId);
+    const missing = parts.filter(p=>!LDP.partReady(p, pr.parts[p.u]));
+    return `<div class="pc-meta">${cab.done}/${cab.total} piezas listas${cab.dmg ? ` · <span style="color:var(--out)">${cab.dmg} dañada(s)</span>` : ''}${cab.built ? ` · armado ${esc(fmtWhen(cab.builtAt))}${cab.builtBy ? ' por ' + esc(cab.builtBy) : ''}` : ''}</div>
+      ${missing.length ? `<div class="block-title" style="margin:6px 0 2px;">Faltan</div><ul class="pc-list">${missing.map(p=>partLine(p, pr.parts[p.u])).join('')}</ul>` : '<div class="pc-meta" style="color:var(--in);">Todas las piezas están listas.</div>'}
+      <div class="pc-actions">${cab.c ? (cab.built
+        ? `<button class="danger" data-unbuild="${esc(cab.c)}" data-job="${esc(jobId)}">Quitar armado</button>`
+        : `<button class="primary" data-build="${esc(cab.c)}" data-job="${esc(jobId)}">Mueble armado</button>`) : ''}</div>`;
+  }
+  function bindBuildButtons(root){
+    root.querySelectorAll('[data-build]').forEach(b=>b.addEventListener('click', (e)=>{ e.preventDefault(); markBuilt(b.dataset.job, b.dataset.build, true); }));
+    root.querySelectorAll('[data-unbuild]').forEach(b=>b.addEventListener('click', (e)=>{ e.preventDefault(); markBuilt(b.dataset.job, b.dataset.unbuild, false); }));
+  }
+  async function markBuilt(jobId, cabId, on){
+    const pr = progressOf(jobId); if(!pr) return;
+    const cab = pr.cabinets.find(c=>c.c === cabId); if(!cab) return;
+    if(on && !cab.ready){
+      const ok = await askConfirm(`El mueble ${cabId} tiene ${cab.total - cab.done} pieza(s) sin terminar${cab.dmg ? ` (${cab.dmg} dañada(s))` : ''}. ¿Marcarlo armado de todas formas?`, 'Sí, está armado');
+      if(!ok) return;
+    }
+    const ev = on ? {s:'asm', c:cabId} : {s:'asm', c:cabId, o:1};
+    if(taller.last && taller.last.jobId === jobId) taller.last = {...taller.last, built: ev};
+    const saved = await addTallerEvent(jobId, ev);
+    if(saved) toast(on ? `Mueble ${cabId} armado.` : `Se quitó el armado de ${cabId}.`, 'ok');
+  }
+
+  function renderLastPiece(){
+    const zone = document.getElementById('scanResultZone');
+    const L = taller.last;
+    if(!L || state.activeTab !== 'escanear' || scanMode() !== 'piezas') return;
+    const man = taller.manifests[L.jobId]; if(!man) return;
+    const p = man.parts.find(x=>x.u === L.uid); if(!p) return;
+    const pr = progressOf(L.jobId), st = pr.parts[p.u] || {};
+    const cab = man.cabinets.find(c=>c.c === p.c);
+    let cls = 'ok', did = '';
+    if(L.err){ cls = 'bad'; did = 'No se guardó (sin conexión). Vuelve a escanearla.'; }
+    else if(L.ev){
+      const done = (taller.logs[L.jobId] && taller.logs[L.jobId][tallerDev] && taller.logs[L.jobId][tallerDev].ev.some(e=>sameEv(e, L.ev)));
+      if(!done){ cls = 'warn'; did = 'Se deshizo el escaneo.'; }
+      else if(L.ev.s === 'cut') did = '✓ Cortada';
+      else if(L.ev.s === 'eb') did = '✓ Canto puesto';
+      else if(L.ev.s === 'dmg' && !L.ev.o){ cls = 'bad'; did = 'Marcada dañada / perdida'; }
+      else if(L.ev.s === 'dmg' && L.ev.o){ did = 'Se quitó la marca de dañada'; }
+    }
+    else if(L.why === 'already'){ cls = 'warn'; did = taller.station === 'canto' ? 'Ya tenía canto' : 'Ya estaba cortada'; }
+    else if(L.why === 'no-eb'){ cls = 'warn'; did = 'Esta pieza no lleva canto'; }
+    else if(L.why === 'armado'){ cls = st.dmg ? 'bad' : 'ok'; did = `Mueble ${p.c || 'suelto'}`; }
+    // lo mismo, corto, sobre la cámara (para no tener que bajar a ver la tarjeta)
+    if(state.cameraOn) setScanStatus(`${did} · #${p.k} ${p.n}`, cls === 'ok' ? 'ok' : cls === 'bad' ? 'err' : '');
+    const mineDone = L.ev && !L.err && taller.logs[L.jobId] && taller.logs[L.jobId][tallerDev] && taller.logs[L.jobId][tallerDev].ev.some(e=>sameEv(e, L.ev));
+    zone.innerHTML = `<div class="pc-card ${cls}">
+      <div class="pc-did">${esc(did)}</div>
+      <div class="pc-job">${esc(man.job)}${man.client ? ' · ' + esc(man.client) : ''}</div>
+      <div class="pc-cab">${esc(p.c || 'Pieza suelta')}${cab ? ' · ' + esc(cab.name) : ''}</div>
+      <div class="pc-part">#${esc(p.k)} ${esc(p.n)}${L.remake ? ' <span class="pc-chip warn">vuelta a cortar</span>' : ''}</div>
+      <div class="pc-meta">${esc(p.m)} · ${fmtIn(p.w)} × ${fmtIn(p.l)}${p.eb ? ' · lleva canto' : ''}</div>
+      ${L.why === 'armado' ? cabinetChecklist(L.jobId, p.c) : `<div class="pc-chips">${partChips(p, st)}</div>`}
+      <div class="pc-actions" style="margin-top:8px;">
+        ${mineDone && L.ev.s !== 'asm' ? '<button id="pcUndo">Deshacer</button>' : ''}
+        ${st.dmg ? '<button id="pcUndmg">Quitar marca de dañada</button>' : '<button class="danger" id="pcDmg">Dañada / perdida</button>'}
+        ${p.c ? '<button id="pcCab">Ver el mueble</button>' : ''}
+      </div>
+    </div>`;
+    bindBuildButtons(zone);
+    const undo = document.getElementById('pcUndo');
+    if(undo) undo.addEventListener('click', async ()=>{ await removeTallerEvent(L.jobId, L.ev); toast('Escaneo deshecho.', 'ok'); });
+    const dmg = document.getElementById('pcDmg');
+    if(dmg) dmg.addEventListener('click', ()=>openDmg(L.jobId, p));
+    const und = document.getElementById('pcUndmg');
+    if(und) und.addEventListener('click', async ()=>{
+      const ev = {s:'dmg', p:p.u, o:1};
+      taller.last = {jobId:L.jobId, uid:p.u, ev, remake:false};
+      await addTallerEvent(L.jobId, ev);
+    });
+    const cb = document.getElementById('pcCab');
+    if(cb) cb.addEventListener('click', ()=>{ openTallerJob(L.jobId, p.c); });
+  }
+
+  /* --- pieza dañada o perdida --- */
+  let dmgTarget = null;
+  function openDmg(jobId, part){
+    dmgTarget = {jobId, part};
+    document.getElementById('dmgPart').innerHTML = `<b>#${esc(part.k)} ${esc(part.n)}</b><br><span style="color:var(--text-dim);font-family:var(--mono);font-size:12px;">${esc(part.c || 'Pieza suelta')} · ${esc(part.m)} · ${fmtIn(part.w)} × ${fmtIn(part.l)}</span>`;
+    document.getElementById('dmgReason').value = '';
+    document.querySelectorAll('#dmgChips .chip').forEach(c=>c.classList.remove('active'));
+    document.getElementById('modalDmg').classList.remove('hidden');
+  }
+  document.querySelectorAll('#dmgChips .chip').forEach(c=>c.addEventListener('click', ()=>{
+    document.querySelectorAll('#dmgChips .chip').forEach(x=>x.classList.toggle('active', x === c));
+    document.getElementById('dmgReason').value = c.dataset.reason;
+  }));
+  document.getElementById('dmgSaveBtn').addEventListener('click', async ()=>{
+    if(!dmgTarget) return;
+    const {jobId, part} = dmgTarget; dmgTarget = null;
+    const n = document.getElementById('dmgReason').value.trim().slice(0, 120);
+    document.getElementById('modalDmg').classList.add('hidden');
+    const ev = n ? {s:'dmg', p:part.u, n} : {s:'dmg', p:part.u};
+    taller.last = {jobId, uid:part.u, ev, remake:false};
+    if(await addTallerEvent(jobId, ev)) toast('Marcada dañada: en Luxury Design pasa al Remake Bin.', 'ok');
+  });
+
+  /* --- estación --- */
+  function renderStationSeg(){
+    document.querySelectorAll('#stationSeg button').forEach(b=>b.classList.toggle('active', b.dataset.station === taller.station));
+  }
+  document.querySelectorAll('#stationSeg button').forEach(b=>b.addEventListener('click', ()=>{
+    taller.station = b.dataset.station; lsSet('ld-station', taller.station);
+    renderStationSeg();
+    toast(`Estación: ${STATIONS[taller.station]}`, 'ok');
+  }));
+
+  /* --- trabajos en el taller (debajo de la cámara) --- */
+  function bar(label, n, of, green){
+    const pct = of ? Math.round(100 * n / of) : 0;
+    return `<div class="tj-row"><span class="lbl">${label}</span><div class="progress-bar"><div class="progress-fill${green ? ' green' : ''}" style="width:${pct}%"></div></div><span class="num">${n}/${of}</span></div>`;
+  }
+  function openTallerJob(jobId, cabId){
+    taller.view = jobId;
+    if(cabId) taller.openCabs.add(`${jobId}|${cabId}`);
+    renderTaller();
+    loadJobLogs(jobId).then(()=>{ renderTaller(); renderLastPiece(); });
+    const z = document.getElementById('tallerZone');
+    if(z) setTimeout(()=>z.scrollIntoView({behavior:'smooth', block:'start'}), 30);
+  }
+  function renderTaller(){
+    const z = document.getElementById('tallerZone');
+    if(!z || state.activeTab !== 'escanear' || scanMode() !== 'piezas') return;
+    if(!LDP){ z.innerHTML = '<div class="empty-state">No se pudo cargar el taller. Recarga la página.</div>'; return; }
+    if(taller.view && taller.manifests[taller.view]) return renderTallerJob(z, taller.view);
+    taller.view = null;
+    const head = `<div class="taller-head"><div class="block-title">Trabajos en el taller</div><button class="link-btn" id="tallerRefresh" style="color:var(--accent);">actualizar</button></div>`;
+    let body;
+    if(!taller.loadedAt && !taller.error) body = '<div class="empty-state" style="margin-top:0;">Leyendo el taller…</div>';
+    else if(taller.error && !taller.jobs.length) body = '<div class="empty-state" style="margin-top:0;">No se pudo leer el taller (sin conexión). Toca «actualizar».</div>';
+    else if(!taller.jobs.length) body = '<div class="empty-state" style="margin-top:0;"><strong>Sin trabajos en el taller</strong>Se mandan desde Luxury Design: Gabinetes → Luxury Inventory → «Mandar las piezas al taller». Después cada etiqueta se escanea aquí.</div>';
+    else{
+      const rows = taller.jobs.slice().sort((a,b)=>(b.at||0)-(a.at||0)).map(j=>({j, man:taller.manifests[j.jobId], pr:progressOf(j.jobId)}));
+      const done = rows.filter(r=>r.pr && r.pr.allBuilt), open = rows.filter(r=>!(r.pr && r.pr.allBuilt));
+      const card = (r)=>{
+        const nCabs = realCabs(r.man), pr = r.pr;
+        return `<button class="tj-card${pr && pr.allBuilt ? ' done' : ''}" data-tj="${esc(r.j.jobId)}">
+          <div class="tj-name">${esc(r.j.job || r.j.jobId)}</div>
+          <div class="tj-client">${esc(r.j.client || '')}${r.j.at ? ` · mandado ${esc(fmtWhen(r.j.at))}` : ''}</div>
+          ${pr ? bar('Listas', pr.done, pr.total, pr.partsDone) + bar('Armados', pr.cabsBuilt, nCabs, pr.allBuilt) : '<div class="tj-row">Cargando piezas…</div>'}
+          ${pr && pr.dmg ? `<div class="tj-dmg">${pr.dmg} pieza(s) dañada(s)</div>` : ''}
+        </button>`;
+      };
+      body = open.map(card).join('') || '<div class="empty-state" style="margin-top:0;">Todos los trabajos están armados.</div>';
+      if(done.length){
+        body += `<button class="secondary-btn" id="tallerDoneToggle">${taller.showDone ? 'Ocultar' : 'Ver'} terminados (${done.length})</button>`;
+        if(taller.showDone) body += `<div style="margin-top:8px;">${done.map(card).join('')}</div>`;
+      }
+    }
+    z.innerHTML = head + body;
+    const rf = document.getElementById('tallerRefresh');
+    if(rf) rf.addEventListener('click', async ()=>{ rf.textContent = 'leyendo…'; await loadTaller(true); renderTaller(); });
+    const dt = document.getElementById('tallerDoneToggle');
+    if(dt) dt.addEventListener('click', ()=>{ taller.showDone = !taller.showDone; renderTaller(); });
+    z.querySelectorAll('[data-tj]').forEach(b=>b.addEventListener('click', ()=>openTallerJob(b.dataset.tj)));
+  }
+  function renderTallerJob(z, jobId){
+    const man = taller.manifests[jobId], pr = progressOf(jobId);
+    const nCabs = realCabs(man);
+    const cabCards = pr.cabinets.map(c=>{
+      const key = `${jobId}|${c.c}`;
+      const cls = c.dmg ? 'dmg' : c.built ? 'built' : c.ready ? 'ready' : '';
+      const tag = c.built ? '<span class="pc-chip on">Armado</span>' : c.ready ? '<span class="pc-chip warn">Listo para armar</span>' : '';
+      const parts = man.parts.filter(p=>p.c === c.c);
+      return `<details class="tc-card ${cls}" data-cab="${esc(key)}"${taller.openCabs.has(key) ? ' open' : ''}>
+        <summary><div class="tc-top"><span><span class="pc-cab">${esc(c.c || 'Sueltas')}</span> <span style="font-size:13px;">${esc(c.name)}</span></span><span class="pc-chip">${c.done}/${c.total}</span></div>
+          <div class="pc-chips" style="margin:6px 0 0;">${tag}${c.dmg ? `<span class="pc-chip bad">${c.dmg} dañada(s)</span>` : ''}${c.needEb ? `<span class="pc-chip">canto ${c.eb}/${c.needEb}</span>` : ''}<span class="pc-chip">cortadas ${c.cut}/${c.total}</span></div></summary>
+        <div class="tc-body"><ul class="pc-list">${parts.map(p=>partLine(p, pr.parts[p.u])).join('')}</ul>
+          ${c.c ? `<div class="pc-actions">${c.built ? `<button class="danger" data-unbuild="${esc(c.c)}" data-job="${esc(jobId)}">Quitar armado</button>` : `<button class="primary" data-build="${esc(c.c)}" data-job="${esc(jobId)}">Mueble armado</button>`}</div>` : ''}
+        </div>
+      </details>`;
+    }).join('');
+    const dmgList = pr.damaged.length ? `<div class="block-title" style="margin-top:14px;">Dañadas o perdidas (${pr.damaged.length})</div>
+      <ul class="pc-list">${pr.damaged.map(p=>{ const st = pr.parts[p.u] || {}; return `<li><span class="k">#${esc(p.k)}</span><span class="n">${esc(p.c)} ${esc(p.n)}${st.dmgNote ? ' — ' + esc(st.dmgNote) : ''}<br><span style="color:var(--text-dim);font-size:11.5px;font-family:var(--mono);">${esc(st.by || '')} · ${esc(fmtWhen(st.dmgAt))}</span></span></li>`; }).join('')}</ul>
+      <div class="pc-meta" style="font-family:var(--sans);">En Luxury Design pasan solas al Remake Bin. Al escanear la pieza nueva en Corte, sale de esta lista.</div>` : '';
+    z.innerHTML = `<button class="back-link" id="tallerBack">← Trabajos en el taller</button>
+      <div class="tj-name" style="font-size:16px;">${esc(man.job)}</div>
+      <div class="tj-client">${esc(man.client || '')} · mandado ${esc(fmtWhen(man.at))}${pr.lastAt ? ` · último escaneo ${esc(fmtWhen(pr.lastAt))}` : ''}</div>
+      ${bar('Listas', pr.done, pr.total, pr.partsDone)}${bar('Cortadas', pr.cut, pr.total, false)}${pr.needEb ? bar('Canto', pr.eb, pr.needEb, false) : ''}${bar('Armados', pr.cabsBuilt, nCabs, pr.allBuilt)}
+      ${dmgList}
+      <div class="block-title" style="margin-top:14px;">Muebles</div>
+      ${cabCards}
+      ${pr.unknown ? `<div class="pc-meta">${pr.unknown} escaneo(s) de piezas que ya no están en el diseño.</div>` : ''}`;
+    document.getElementById('tallerBack').addEventListener('click', ()=>{ taller.view = null; renderTaller(); });
+    z.querySelectorAll('details[data-cab]').forEach(d=>d.addEventListener('toggle', ()=>{ if(d.open) taller.openCabs.add(d.dataset.cab); else taller.openCabs.delete(d.dataset.cab); }));
+    bindBuildButtons(z);
+  }
+
+  /* --- en el detalle de una orden: cómo va en el taller --- */
+  async function fillOrderTaller(o){
+    if(!LDP) return;
+    if(!taller.loadedAt) await loadTaller(false);
+    const box = document.getElementById('odTaller');
+    if(!box || state.detailOrderId !== o.id) return;
+    const j = findTallerJob(o.job);
+    if(!j){ box.innerHTML = ''; return; }
+    const pr = progressOf(j.jobId), nCabs = realCabs(taller.manifests[j.jobId]);
+    box.innerHTML = `<div class="od-taller"><span>Taller: ${pr ? `listas ${pr.done}/${pr.total} · armados ${pr.cabsBuilt}/${nCabs}${pr.dmg ? ` · <b style="color:var(--out)">${pr.dmg} dañada(s)</b>` : ''}` : 'piezas mandadas'}</span><button id="odTallerBtn">Ver en el taller</button></div>`;
+    document.getElementById('odTallerBtn').addEventListener('click', ()=>{
+      document.getElementById('modalOrderDetail').classList.add('hidden');
+      if(state.activeOrderId){ state.activeOrderId = null; }
+      scanKind = 'piezas'; lsSet('ld-scan-kind', 'piezas');
+      taller.view = j.jobId;
+      switchTab('escanear');
+      openTallerJob(j.jobId);
+    });
+  }
+
+  /* ============ NOTIFICACIONES PUSH ============
+     Cada teléfono se suscribe (service worker sw.js) y el servidor (función ld-push de Supabase) manda los avisos:
+     trabajo nuevo, orden completada, piezas listas en el taller y trabajo armado. Silenciar = el servidor no le manda.
+     La llave pública (VAPID) la da el servidor ({action:'key'}): la crea él mismo al instalarse. */
+  const PUSH_TYPES = [
+    ['nuevo', 'Trabajo nuevo'],
+    ['completado', 'Orden completada'],
+    ['piezas', 'Piezas listas en el taller'],
+    ['armado', 'Trabajo armado (todos los muebles)']
+  ];
+  const PUSH_DEFAULTS = {nuevo:true, completado:true, piezas:true, armado:true, silencio:false};
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isStandalone = ()=> navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  let swReg = null, pushServer = null, pushBusy = false;
+  function pushPrefs(){
+    try{ return {...PUSH_DEFAULTS, ...(JSON.parse(lsGet('ld-push-prefs') || '{}'))}; }catch(e){ return {...PUSH_DEFAULTS}; }
+  }
+  function pushSupport(){
+    if(isIOS && !isStandalone()) return 'ios-install';
+    if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'no';
+    return 'ok';
+  }
+  async function getReg(){
+    if(swReg) return swReg;
+    if(!('serviceWorker' in navigator)) return null;
+    try{ swReg = await navigator.serviceWorker.register('sw.js', {scope:'./'}); }catch(e){ swReg = null; }
+    return swReg;
+  }
+  async function currentSub(){
+    const reg = await getReg();
+    if(!reg || !reg.pushManager) return null;
+    try{ return await reg.pushManager.getSubscription(); }catch(e){ return null; }
+  }
+  function b64uToU8(s){
+    const pad = '='.repeat((4 - s.length % 4) % 4);
+    const raw = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    const out = new Uint8Array(raw.length);
+    for(let i=0;i<raw.length;i++) out[i] = raw.charCodeAt(i);
+    return out;
+  }
+  async function pushCall(body){
+    try{
+      if(!window.storage || !window.storage.fn) return {ok:false, server:'net'};
+      const r = await window.storage.fn('ld-push', body);
+      if(r.ok && r.data && r.data.ok) return {ok:true};
+      if(r.status === 404 || r.status === 503) return {ok:false, server:'missing'};
+      return {ok:false, server:'error', error: r.data && r.data.error};
+    }catch(e){ return {ok:false, server:'net'}; }
+  }
+  /* llave pública del servidor de avisos (sin ella no se puede suscribir el teléfono) */
+  async function serverKey(){
+    try{
+      if(!window.storage || !window.storage.fn) return {server:'net'};
+      const r = await window.storage.fn('ld-push', {action:'key'});
+      const k = r.ok && r.data && r.data.ok ? r.data.publicKey : '';
+      if(typeof k === 'string' && /^[A-Za-z0-9_-]{80,100}$/.test(k)) return {key:k};
+      if(r.status === 404 || r.status === 503) return {server:'missing'};
+      return {server:'error'};
+    }catch(e){ return {server:'net'}; }
+  }
+  function sameKey(sub, key){
+    try{
+      const k = sub && sub.options && sub.options.applicationServerKey;
+      if(!k) return true;
+      const a = new Uint8Array(k), b = b64uToU8(key);
+      return a.length === b.length && a.every((x, i)=>x === b[i]);
+    }catch(e){ return true; }
+  }
+  /* suscribe este teléfono con la llave del servidor y lo registra; si el servidor no está, queda pendiente */
+  async function subscribeWithServer(reg, quiet){
+    const k = await serverKey();
+    if(!k.key){
+      lsSet('ld-push-pending', '1');
+      pushServer = k.server || 'error';
+      if(!quiet) toast('El servidor de avisos todavía no está instalado. Este teléfono queda listo y se activa solo cuando lo esté.', '');
+      return false;
+    }
+    let sub = await reg.pushManager.getSubscription();
+    if(sub && !sameKey(sub, k.key)){ try{ await sub.unsubscribe(); }catch(e){} sub = null; }
+    if(!sub) sub = await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey: b64uToU8(k.key)});
+    return registerSub(sub, quiet);
+  }
+  function pushWho(){ return state.me ? `${state.me.name} #${state.me.slot}` : ''; }
+  async function registerSub(sub, quiet){
+    const r = await pushCall({action:'subscribe', sub: sub.toJSON(), device: tallerDev, who: pushWho(), prefs: pushPrefs()});
+    lsSet('ld-push-pending', r.ok ? '' : '1');
+    pushServer = r.ok ? 'ok' : (r.server || 'error');
+    if(!quiet) toast(r.ok ? 'Notificaciones activadas en este teléfono.' : 'Este teléfono quedó listo. El servidor de avisos todavía no está instalado: se registra solo cuando lo esté.', r.ok ? 'ok' : '');
+    return r.ok;
+  }
+  async function enablePush(){
+    if(pushBusy) return;
+    pushBusy = true;
+    try{
+      const perm = await Notification.requestPermission();
+      if(perm !== 'granted'){ toast('Sin permiso no se pueden mandar avisos a este teléfono.', 'err'); return; }
+      const reg = await getReg();
+      if(!reg){ toast('Este navegador no deja instalar el servicio de avisos.', 'err'); return; }
+      await navigator.serviceWorker.ready;
+      await subscribeWithServer(reg, false);
+    }catch(e){ toast('No se pudieron activar las notificaciones en este teléfono.', 'err'); }
+    finally{ pushBusy = false; renderPushBox(); }
+  }
+  async function disablePush(){
+    const sub = await currentSub();
+    if(sub){ await pushCall({action:'unsubscribe', endpoint: sub.endpoint}); try{ await sub.unsubscribe(); }catch(e){} }
+    lsSet('ld-push-pending', '');
+    toast('Notificaciones desactivadas en este teléfono.', 'ok');
+    renderPushBox();
+  }
+  async function savePushPrefs(prefs){
+    lsSet('ld-push-prefs', JSON.stringify(prefs));
+    if(lsGet('ld-push-pending') === '1'){
+      const reg = await getReg();
+      if(reg && reg.pushManager) await subscribeWithServer(reg, true);
+      renderPushBox(); return;
+    }
+    const sub = await currentSub(); if(!sub){ renderPushBox(); return; }
+    const r = await pushCall({action:'prefs', endpoint: sub.endpoint, prefs});
+    if(!r.ok){ lsSet('ld-push-pending', '1'); pushServer = r.server || 'net'; }
+    renderPushBox();
+  }
+  async function testPush(){
+    if(lsGet('ld-push-pending') === '1'){
+      const reg = await getReg();
+      if(!reg || !reg.pushManager || !(await subscribeWithServer(reg, true))){ renderPushBox(); toast('El servidor de avisos todavía no está instalado.', ''); return; }
+    }
+    const sub = await currentSub(); if(!sub) return;
+    const r = await pushCall({action:'test', endpoint: sub.endpoint});
+    toast(r.ok ? 'Se mandó una de prueba: debe llegar en unos segundos.' : 'El servidor de avisos todavía no está instalado.', r.ok ? 'ok' : '');
+    if(!r.ok){ pushServer = r.server || 'net'; renderPushBox(); }
+  }
+  async function renderPushBox(){
+    const box = document.getElementById('pushBox'); if(!box) return;
+    const sup = pushSupport();
+    if(sup === 'ios-install'){
+      box.innerHTML = `<p>En el iPhone los avisos llegan cuando la app está agregada a la pantalla de inicio: en Safari toca <b>Compartir</b> → <b>Agregar a inicio</b> y abre Luxury Inventory desde ese ícono. Luego vuelve aquí para activarlos (iOS 16.4 o más nuevo).</p>`;
+      return;
+    }
+    if(sup === 'no'){ box.innerHTML = '<p>Este navegador no puede recibir notificaciones push. Usa Chrome en Android, o en iPhone la app agregada a la pantalla de inicio.</p>'; return; }
+    if(Notification.permission === 'denied'){ box.innerHTML = '<p>Las notificaciones están bloqueadas para esta app. Permítelas en los ajustes del navegador o del teléfono y vuelve aquí.</p>'; return; }
+    const sub = await currentSub();
+    const pending = lsGet('ld-push-pending') === '1' && Notification.permission === 'granted';
+    if(!sub && !pending){
+      box.innerHTML = `<p>Recibe un aviso en este teléfono cuando se añade un trabajo, se completa una orden, quedan listas las piezas en el taller o se arma todo un trabajo. Puedes silenciarlos cuando quieras.</p>
+        <button class="primary-btn" id="pushOnBtn" style="margin-top:0;">Activar notificaciones</button>`;
+      document.getElementById('pushOnBtn').addEventListener('click', enablePush);
+      return;
+    }
+    const prefs = pushPrefs();
+    box.innerHTML = `<label class="push-row master"><span>Silenciar todas</span><input type="checkbox" id="pushMute"${prefs.silencio ? ' checked' : ''}></label>
+      ${PUSH_TYPES.map(([k, t])=>`<label class="push-row"><span style="${prefs.silencio ? 'opacity:.5' : ''}">${t}</span><input type="checkbox" data-push="${k}"${prefs[k] ? ' checked' : ''}${prefs.silencio ? ' disabled' : ''}></label>`).join('')}
+      ${pending || (pushServer && pushServer !== 'ok') ? '<div class="push-note warn">El servidor de avisos todavía no está instalado (o no hay conexión). Este teléfono queda listo y se registra solo cuando lo esté.</div>' : (prefs.silencio ? '<div class="push-note warn">Silenciadas: este teléfono no recibe avisos hasta que las vuelvas a activar.</div>' : '<div class="push-note">Activas en este teléfono.</div>')}
+      <button class="secondary-btn" id="pushTestBtn">Enviar una de prueba</button>
+      <button class="secondary-btn" id="pushOffBtn">Desactivar en este teléfono</button>`;
+    document.getElementById('pushMute').addEventListener('change', (e)=>savePushPrefs({...pushPrefs(), silencio: e.target.checked}));
+    box.querySelectorAll('[data-push]').forEach(c=>c.addEventListener('change', ()=>savePushPrefs({...pushPrefs(), [c.dataset.push]: c.checked})));
+    document.getElementById('pushTestBtn').addEventListener('click', testPush);
+    document.getElementById('pushOffBtn').addEventListener('click', disablePush);
+  }
+  /* al abrir la app: si quedó pendiente registrar este teléfono (el servidor no estaba), se reintenta */
+  async function retryPushRegistration(){
+    if(pushSupport() !== 'ok' || lsGet('ld-push-pending') !== '1' || Notification.permission !== 'granted') return;
+    const reg = await getReg();
+    if(reg && reg.pushManager){ await subscribeWithServer(reg, true); renderPushBox(); }
+  }
+  if(pushSupport() === 'ok') getReg().then(()=>setTimeout(retryPushRegistration, 8000));
+
+
   /* ============ ÓRDENES ============ */
   function isOneTap(product){
     if(!product) return false;
@@ -2196,6 +2950,7 @@
         <span class="split-chip ${hwChipClass(o)}">${hwChipText(o)}</span>
         <span class="split-chip ${hasMat?matChipClass(o):''}">${hasMat?matChipText(o):'Sin materiales'}</span>
       </div>
+      <div id="odTaller"></div>
       ${orderNotes(o).length ? `<details class="notes-box">
         <summary>Ver notas disponibles (${orderNotes(o).length})</summary>
         ${orderNotes(o).map(n=>`<div class="note-item">
@@ -2282,6 +3037,7 @@
     document.getElementById('odMatWhBtn').style.display = (isDone || (!whCanMat(o) && !whCanHw(o))) ? 'none' : 'block';
     document.getElementById('odFinishBtn').style.display = isDone ? 'none' : 'block';
     document.getElementById('odEditBtn').style.display = (isAdmin() && !isDone) ? 'block' : 'none';
+    fillOrderTaller(o);
   }
   document.getElementById('odEditBtn').addEventListener('click', ()=>{
     if(state.detailOrderId) openEditOrder(state.detailOrderId);
@@ -3575,6 +4331,8 @@
   });
   document.getElementById('fabRemScan').addEventListener('click', ()=>{
     if(state.activeOrderId){ state.activeOrderId = null; renderOrdersList(); }
+    scanKind = 'rem';
+    try{ localStorage.setItem('ld-scan-kind', 'rem'); }catch(e){}
     switchTab('escanear');
   });
 
@@ -3760,7 +4518,7 @@
 
   /* ============ AJUSTES ============ */
   document.getElementById('settingsBtn').addEventListener('click', ()=>{
-    renderTeamList(); renderSectionsManageList(); renderBackupInfo();
+    renderTeamList(); renderSectionsManageList(); renderBackupInfo(); renderPushBox();
     document.getElementById('modalSettings').classList.remove('hidden');
   });
   function renderTeamList(){

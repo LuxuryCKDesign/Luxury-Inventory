@@ -203,6 +203,32 @@
       if (!r.ok) throw new Error('Supabase list ' + r.status);
       var filas = await r.json();
       return { keys: filas.map(function (f) { return f.key; }), prefix: prefix, shared: true };
+    },
+
+    /* Claves y valores que empiezan con un prefijo, en una sola consulta (taller: ld:scan:…, ld:parts:…). */
+    async listValues(prefix) {
+      await preparado();
+      var url = REST + '?select=key,value&key=like.' + encodeURIComponent((prefix || '') + '%');
+      var r = await pedir(url, { headers: await cabeceras() });
+      if (!r.ok) throw new Error('Supabase list ' + r.status);
+      var filas = await r.json();
+      return filas.map(function (f) {
+        var v = f.value;
+        return { key: f.key, value: typeof v === 'string' ? v : JSON.stringify(v) };
+      });
+    },
+
+    /* Llama una función del servidor (Supabase Edge Functions), con la misma llave o sesión. */
+    async fn(nombre, cuerpo) {
+      await preparado();
+      var r = await pedir(CONFIG.URL + '/functions/v1/' + encodeURIComponent(nombre), {
+        method: 'POST',
+        headers: await cabeceras(),
+        body: JSON.stringify(cuerpo || {})
+      });
+      var datos = null;
+      try { datos = await r.json(); } catch (e) {}
+      return { status: r.status, ok: r.ok, data: datos };
     }
   };
 
