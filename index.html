@@ -479,7 +479,7 @@
     </div>
     <div class="segmented station-seg" id="stationSeg" style="display:none;">
       <button data-station="corte">Corte</button>
-      <button data-station="canto">Canto</button>
+      <button data-station="edgeband">Edgeband</button>
       <button data-station="armado">Armado</button>
     </div>
     <div id="scanResultZone"></div>
@@ -667,7 +667,7 @@
         <button class="chip" data-reason="Rayada">Rayada</button>
         <button class="chip" data-reason="Mal cortada">Mal cortada</button>
         <button class="chip" data-reason="Se quebró">Se quebró</button>
-        <button class="chip" data-reason="Canto malo">Canto malo</button>
+        <button class="chip" data-reason="Edgeband malo">Edgeband malo</button>
         <button class="chip" data-reason="Perdida">Perdida</button>
       </div>
       <div class="field"><label>Por qué (opcional)</label><input id="dmgReason" placeholder="Ej. se rayó al cargarla" maxlength="120"></div>
@@ -680,7 +680,7 @@
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 30 · Escanear → «Piezas del taller»: el QR de cada etiqueta de Luxury Design marca la pieza cortada, con canto o dañada, y cada mueble armado; abajo se ve cómo va cada trabajo. Notificaciones push por teléfono (trabajo nuevo, orden completada, piezas listas, trabajo armado), con silencio.<br>Antes: en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 30 · Escanear → «Piezas del taller»: el QR de cada etiqueta de Luxury Design marca la pieza cortada, con edgeband o dañada, y cada mueble armado; abajo se ve cómo va cada trabajo. Notificaciones push por teléfono (trabajo nuevo, orden completada, piezas listas, trabajo armado), con silencio.<br>Antes: en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -2170,14 +2170,14 @@
 
   /* ============ TALLER: piezas de Luxury Design ============
      Luxury Design manda las piezas de cada trabajo (ld:parts:<trabajo>) y la lista ld:jobs. Cada etiqueta lleva un
-     QR "LD|<trabajo>|<pieza>|<número>". Aquí se escanea en tres estaciones: Corte, Canto y Armado (por mueble).
+     QR "LD|<trabajo>|<pieza>|<número>". Aquí se escanea en tres estaciones: Corte, Edgeband y Armado (por mueble).
      Cada teléfono escribe solo su propia clave ld:scan:<trabajo>:<equipo>, así dos teléfonos nunca se pisan.
      La lógica (qué marca cada escaneo, cómo va cada mueble) es la misma de Luxury Design: ld-produccion.js. */
   const LDP = window.LDProd || null;
   function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
   function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
   const tallerDev = (()=>{ let d = lsGet('ld-device'); if(!d){ d = 'd' + uid(); lsSet('ld-device', d); } return d; })();
-  const STATIONS = {corte:'Corte', canto:'Canto', armado:'Armado'};
+  const STATIONS = {corte:'Corte', edgeband:'Edgeband', armado:'Armado'};
   const taller = {
     jobs: [],           // ld:jobs
     manifests: {},      // trabajo → piezas y muebles
@@ -2187,7 +2187,7 @@
     view: null,         // trabajo abierto en el detalle (null = la lista)
     openCabs: new Set(),
     showDone: false,
-    station: STATIONS[lsGet('ld-station')] ? lsGet('ld-station') : 'corte',
+    station: lsGet('ld-station') === 'canto' ? 'edgeband' : (STATIONS[lsGet('ld-station')] ? lsGet('ld-station') : 'corte'), // 'canto' = nombre viejo
     last: null,         // lo último escaneado: {jobId, uid, ev, why, remake, err}
     markerTimers: {}
   };
@@ -2398,8 +2398,8 @@
     const chips = [];
     if(st.dmg) chips.push(`<span class="pc-chip bad">Dañada${st.dmgNote ? ': ' + esc(st.dmgNote) : ''}</span>`);
     chips.push(st.cut ? '<span class="pc-chip on">Cortada ✓</span>' : '<span class="pc-chip">Por cortar</span>');
-    if(p.eb) chips.push(st.eb ? '<span class="pc-chip on">Canto ✓</span>' : '<span class="pc-chip">Falta canto</span>');
-    else chips.push('<span class="pc-chip">Sin canto</span>');
+    if(p.eb) chips.push(st.eb ? '<span class="pc-chip on">Edgeband ✓</span>' : '<span class="pc-chip">Falta edgeband</span>');
+    else chips.push('<span class="pc-chip">Sin edgeband</span>');
     if(LDP.partReady(p, st)) chips.push('<span class="pc-chip on">Lista</span>');
     return chips.join('');
   }
@@ -2407,7 +2407,7 @@
     st = st || {};
     const chip = st.dmg ? `<span class="pc-chip bad">${st.dmgNote ? 'Dañada: ' + esc(st.dmgNote) : 'Dañada'}</span>`
       : LDP.partReady(p, st) ? '<span class="pc-chip on">Lista</span>'
-      : st.cut ? '<span class="pc-chip warn">Falta canto</span>' : '<span class="pc-chip">Por cortar</span>';
+      : st.cut ? '<span class="pc-chip warn">Falta edgeband</span>' : '<span class="pc-chip">Por cortar</span>';
     return `<li><span class="k">#${esc(p.k)}</span><span class="n">${esc(p.n)}</span>${chip}</li>`;
   }
   function cabinetChecklist(jobId, cabId){
@@ -2453,12 +2453,12 @@
       const done = (taller.logs[L.jobId] && taller.logs[L.jobId][tallerDev] && taller.logs[L.jobId][tallerDev].ev.some(e=>sameEv(e, L.ev)));
       if(!done){ cls = 'warn'; did = 'Se deshizo el escaneo.'; }
       else if(L.ev.s === 'cut') did = '✓ Cortada';
-      else if(L.ev.s === 'eb') did = '✓ Canto puesto';
+      else if(L.ev.s === 'eb') did = '✓ Edgeband puesto';
       else if(L.ev.s === 'dmg' && !L.ev.o){ cls = 'bad'; did = 'Marcada dañada / perdida'; }
       else if(L.ev.s === 'dmg' && L.ev.o){ did = 'Se quitó la marca de dañada'; }
     }
-    else if(L.why === 'already'){ cls = 'warn'; did = taller.station === 'canto' ? 'Ya tenía canto' : 'Ya estaba cortada'; }
-    else if(L.why === 'no-eb'){ cls = 'warn'; did = 'Esta pieza no lleva canto'; }
+    else if(L.why === 'already'){ cls = 'warn'; did = taller.station === 'edgeband' ? 'Ya tenía edgeband' : 'Ya estaba cortada'; }
+    else if(L.why === 'no-eb'){ cls = 'warn'; did = 'Esta pieza no lleva edgeband'; }
     else if(L.why === 'armado'){ cls = st.dmg ? 'bad' : 'ok'; did = `Mueble ${p.c || 'suelto'}`; }
     // lo mismo, corto, sobre la cámara (para no tener que bajar a ver la tarjeta)
     if(state.cameraOn) setScanStatus(`${did} · #${p.k} ${p.n}`, cls === 'ok' ? 'ok' : cls === 'bad' ? 'err' : '');
@@ -2468,7 +2468,7 @@
       <div class="pc-job">${esc(man.job)}${man.client ? ' · ' + esc(man.client) : ''}</div>
       <div class="pc-cab">${esc(p.c || 'Pieza suelta')}${cab ? ' · ' + esc(cab.name) : ''}</div>
       <div class="pc-part">#${esc(p.k)} ${esc(p.n)}${L.remake ? ' <span class="pc-chip warn">vuelta a cortar</span>' : ''}</div>
-      <div class="pc-meta">${esc(p.m)} · ${fmtIn(p.w)} × ${fmtIn(p.l)}${p.eb ? ' · lleva canto' : ''}</div>
+      <div class="pc-meta">${esc(p.m)} · ${fmtIn(p.w)} × ${fmtIn(p.l)}${p.eb ? ' · lleva edgeband' : ''}</div>
       ${L.why === 'armado' ? cabinetChecklist(L.jobId, p.c) : `<div class="pc-chips">${partChips(p, st)}</div>`}
       <div class="pc-actions" style="margin-top:8px;">
         ${mineDone && L.ev.s !== 'asm' ? '<button id="pcUndo">Deshacer</button>' : ''}
@@ -2583,7 +2583,7 @@
       const parts = man.parts.filter(p=>p.c === c.c);
       return `<details class="tc-card ${cls}" data-cab="${esc(key)}"${taller.openCabs.has(key) ? ' open' : ''}>
         <summary><div class="tc-top"><span><span class="pc-cab">${esc(c.c || 'Sueltas')}</span> <span style="font-size:13px;">${esc(c.name)}</span></span><span class="pc-chip">${c.done}/${c.total}</span></div>
-          <div class="pc-chips" style="margin:6px 0 0;">${tag}${c.dmg ? `<span class="pc-chip bad">${c.dmg} dañada(s)</span>` : ''}${c.needEb ? `<span class="pc-chip">canto ${c.eb}/${c.needEb}</span>` : ''}<span class="pc-chip">cortadas ${c.cut}/${c.total}</span></div></summary>
+          <div class="pc-chips" style="margin:6px 0 0;">${tag}${c.dmg ? `<span class="pc-chip bad">${c.dmg} dañada(s)</span>` : ''}${c.needEb ? `<span class="pc-chip">edgeband ${c.eb}/${c.needEb}</span>` : ''}<span class="pc-chip">cortadas ${c.cut}/${c.total}</span></div></summary>
         <div class="tc-body"><ul class="pc-list">${parts.map(p=>partLine(p, pr.parts[p.u])).join('')}</ul>
           ${c.c ? `<div class="pc-actions">${c.built ? `<button class="danger" data-unbuild="${esc(c.c)}" data-job="${esc(jobId)}">Quitar armado</button>` : `<button class="primary" data-build="${esc(c.c)}" data-job="${esc(jobId)}">Mueble armado</button>`}</div>` : ''}
         </div>
@@ -2595,7 +2595,7 @@
     z.innerHTML = `<button class="back-link" id="tallerBack">← Trabajos en el taller</button>
       <div class="tj-name" style="font-size:16px;">${esc(man.job)}</div>
       <div class="tj-client">${esc(man.client || '')} · mandado ${esc(fmtWhen(man.at))}${pr.lastAt ? ` · último escaneo ${esc(fmtWhen(pr.lastAt))}` : ''}</div>
-      ${bar('Listas', pr.done, pr.total, pr.partsDone)}${bar('Cortadas', pr.cut, pr.total, false)}${pr.needEb ? bar('Canto', pr.eb, pr.needEb, false) : ''}${bar('Armados', pr.cabsBuilt, nCabs, pr.allBuilt)}
+      ${bar('Listas', pr.done, pr.total, pr.partsDone)}${bar('Cortadas', pr.cut, pr.total, false)}${pr.needEb ? bar('Edgeband', pr.eb, pr.needEb, false) : ''}${bar('Armados', pr.cabsBuilt, nCabs, pr.allBuilt)}
       ${dmgList}
       <div class="block-title" style="margin-top:14px;">Muebles</div>
       ${cabCards}

@@ -4,7 +4,7 @@ Los teléfonos con los avisos activados reciben una notificación cuando:
 
 - se agrega un trabajo (orden) nuevo,
 - una orden pasa a **completado**,
-- todas las piezas de un trabajo quedan cortadas y con canto en el taller (`ld:done:<trabajo>`),
+- todas las piezas de un trabajo quedan cortadas y con edgeband en el taller (`ld:done:<trabajo>`),
 - todos los muebles de un trabajo quedan armados (`ld:armado:<trabajo>`).
 
 Cada teléfono elige qué avisos quiere o los silencia todos (⚙ Ajustes → Notificaciones de este teléfono).

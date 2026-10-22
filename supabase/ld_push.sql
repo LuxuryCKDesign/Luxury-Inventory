@@ -99,7 +99,7 @@ begin
       end if;
     elsif TG_OP = 'INSERT' and NEW.key like 'ld:done:%' then
       nv := public.ld_as_json(NEW.value::text);
-      perform public.ld_push_send('piezas', 'Piezas listas en el taller', coalesce(nullif(nv->>'job', ''), 'Un trabajo') || ': todas las piezas cortadas y con canto');
+      perform public.ld_push_send('piezas', 'Piezas listas en el taller', coalesce(nullif(nv->>'job', ''), 'Un trabajo') || ': todas las piezas cortadas y con edgeband');
     elsif TG_OP = 'INSERT' and NEW.key like 'ld:armado:%' then
       nv := public.ld_as_json(NEW.value::text);
       perform public.ld_push_send('armado', 'Trabajo armado', coalesce(nullif(nv->>'job', ''), 'Un trabajo') || ': todos los muebles armados');
