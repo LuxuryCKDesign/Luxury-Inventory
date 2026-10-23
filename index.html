@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icon-512.png">
 <link rel="icon" type="image/png" href="icon-512.png">
   <script src="supabase-storage.js"></script>
-  <script src="ld-produccion.js"></script>
+  <script src="ld-produccion.js?v=31"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -436,7 +436,7 @@
         <button class="icon-btn" id="settingsBtn" title="Ajustes">⚙</button>
       </div>
     </div>
-    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v30</span></div>
+    <div class="sync-row"><span class="sync-dot" id="syncDot"></span><span id="syncLabel">sincronizando…</span><span class="sync-ver">v31</span></div>
     <div class="top-nav">
       <button class="nav-btn active" data-tab="inventario"><span class="nav-ic">▤</span>Inventario</button>
       <button class="nav-btn" data-tab="escanear"><span class="nav-ic">▣</span>Escanear</button>
@@ -680,7 +680,7 @@
     <div class="modal">
       <div class="modal-title"><span>Ajustes</span><button class="icon-btn" data-close="modalSettings">✕</button></div>
       <div style="font-size:11.5px;font-family:var(--mono);color:var(--text-dim);margin-bottom:14px;line-height:1.6;">
-        Versión 30 · Escanear → «Piezas del taller»: el QR de cada etiqueta de Luxury Design marca la pieza cortada, con edgeband o dañada, y cada mueble armado; abajo se ve cómo va cada trabajo. Notificaciones push por teléfono (trabajo nuevo, orden completada, piezas listas, trabajo armado), con silencio.<br>Antes: en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
+        Versión 31 · Escanear → «Piezas del taller» lee el código de barras de las etiquetas nuevas de Luxury Design (con la cámara, con una pistola lectora o escribiendo el número) y también el QR de las viejas.<br>Versión 30 · Piezas del taller: cada etiqueta marca la pieza cortada, con edgeband o dañada, y cada mueble armado; abajo se ve cómo va cada trabajo. Notificaciones push por teléfono (trabajo nuevo, orden completada, piezas listas, trabajo armado), con silencio.<br>Antes: en Órdenes, «Entregado en el almacén» marca las planchas en azul o el hardware en amarillo sin completar; al completarlos pasan a verde. Cada remanente puede tener notas y vincularse a una orden. Logo de Luxury Closet and Kitchen Design y nombre Luxury Inventory. Escanear lee las etiquetas Remnant (material y medida) y las guarda en Remanentes pidiendo solo el color.<br>Todos deben usar el mismo enlace: cada enlace guarda sus datos por separado.<br>
         Si no ves esto en tu teléfono, recarga la página para traer la última versión.
       </div>
       <div class="field"><label>Equipo (15 puestos)</label><div id="teamList"></div></div>
@@ -1595,7 +1595,11 @@
     document.getElementById('scanWrap').classList.toggle('label-mode', label);
     document.getElementById('scanWrap').classList.toggle('piezas-mode', piezas);
     document.getElementById('remActions').style.display = label ? 'flex' : 'none';
-    document.getElementById('manualRow').style.display = mode === 'qr' ? 'flex' : 'none';
+    document.getElementById('manualRow').style.display = (mode === 'qr' || piezas) ? 'flex' : 'none';
+    const mIn = document.getElementById('manualSkuInput');
+    mIn.placeholder = piezas ? 'Número de la etiqueta (1042 0007) o pistola lectora' : 'O escribe el SKU manualmente';
+    mIn.inputMode = piezas ? 'numeric' : 'text';
+    document.getElementById('manualSkuBtn').textContent = piezas ? 'Marcar' : 'Buscar';
     const seg = document.getElementById('scanKindSeg');
     seg.style.display = state.activeOrderId ? 'none' : 'flex';
     seg.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.kind === (piezas ? 'piezas' : 'rem')));
@@ -1606,14 +1610,15 @@
       // al entrar a despachar se limpia; al terminar se deja a la vista lo último despachado
       if(!label || lastScanMode === null) document.getElementById('scanResultZone').innerHTML = '';
       lastScanMode = mode;
-      if(piezas){ renderStationSeg(); renderTaller(); loadTaller(false).then(renderTaller); }
+      if(piezas){ renderStationSeg(); renderTaller(); loadTaller(false).then(renderTaller); focusWedge(); }
     }
     if(mode === 'qr') document.getElementById('scanStatus').classList.add('hidden');
     if(piezas){
       // la guía solo al entrar: después ahí se muestra lo último escaneado
       const st = document.getElementById('scanStatus');
       if(!state.cameraOn) st.classList.add('hidden');
-      else if(changed || st.classList.contains('hidden')) setScanStatus('Apunta al QR de la etiqueta de la pieza.');
+      else if(changed || st.classList.contains('hidden')) setScanStatus('Apunta al código de barras de la etiqueta de la pieza.');
+      if(state.cameraOn) prepareBarcode();
     }
     if(!state.cameraOn) return;
     if(label){
@@ -1700,6 +1705,7 @@
       scanCtx.drawImage(video,0,0,w,h);
       const d = scanCtx.getImageData(0,0,w,h);
       const code = jsQR(d.data, d.width, d.height);
+      if(!(code && code.data) && scanMode() === 'piezas') tryBarcode();
       if(code && code.data){
         const now = Date.now();
         if(code.data !== state.lastScanCode || now - state.lastScanAt > 2200){
@@ -1710,6 +1716,96 @@
       }
     }
     if(state.cameraOn && qrLoopMode()) rafId = requestAnimationFrame(scanLoop);
+  }
+
+  /* --- código de barras de las etiquetas de piezas (Code 128, solo números: trabajo + pieza) ---
+     Con el lector del teléfono (BarcodeDetector, Android) si lo tiene; si no, con ZXing (se descarga la primera vez).
+     Lee el código acostado o parado. Las etiquetas viejas con QR se siguen leyendo con jsQR. */
+  const ZX_SRC = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.23.0/umd/index.min.js';
+  const barRd = {det:null, zx:null, loading:null, failed:false, busy:false, at:0, turn:false};
+  function prepareBarcode(){
+    if(barRd.det || barRd.zx || barRd.loading) return barRd.loading || Promise.resolve();
+    barRd.failed = false;
+    barRd.loading = (async ()=>{
+      try{
+        if('BarcodeDetector' in window){
+          const f = await window.BarcodeDetector.getSupportedFormats();
+          if(f && f.includes('code_128')){ barRd.det = new window.BarcodeDetector({formats:['code_128']}); return; }
+        }
+      }catch(e){ /* sin lector propio: ZXing */ }
+      try{
+        if(!window.ZXing) await new Promise((resolve, reject)=>{
+          const sc = document.createElement('script');
+          sc.src = ZX_SRC; sc.async = true;
+          sc.onload = ()=> window.ZXing ? resolve() : reject(new Error('lector no disponible'));
+          sc.onerror = ()=>{ sc.remove(); reject(new Error('sin conexión')); };
+          document.head.appendChild(sc);
+        });
+        const Z = window.ZXing;
+        const hints = new Map();
+        hints.set(Z.DecodeHintType.POSSIBLE_FORMATS, [Z.BarcodeFormat.CODE_128]);
+        hints.set(Z.DecodeHintType.TRY_HARDER, true);
+        const r = new Z.MultiFormatReader();
+        r.setHints(hints);
+        barRd.zx = r;
+      }catch(e){
+        barRd.failed = true;
+        if(state.cameraOn && scanMode() === 'piezas') setScanStatus('No se pudo cargar el lector de código de barras (sin conexión). Toca aquí para reintentar, o escribe el número abajo.', 'err');
+      }
+    })().finally(()=>{ barRd.loading = null; });
+    return barRd.loading;
+  }
+  function gotBarcode(text){
+    const t = String(text||'').trim();
+    if(!t) return;
+    const now = Date.now();
+    if(t === state.lastScanCode && now - state.lastScanAt <= 2200) return;
+    state.lastScanCode = t; state.lastScanAt = now;
+    handlePieceQr(t);
+  }
+  function tryBarcode(){
+    const now = Date.now();
+    if(barRd.busy || now - barRd.at < 120) return;   // unas 8 veces por segundo
+    barRd.at = now;
+    if(barRd.det){
+      barRd.busy = true;
+      barRd.det.detect(scanCanvas).then(list=>{
+        const c = (list || []).find(x=>x && x.rawValue);
+        if(c) gotBarcode(c.rawValue);
+      }).catch(()=>{}).finally(()=>{ barRd.busy = false; });
+      return;
+    }
+    if(!barRd.zx){ if(!barRd.failed) prepareBarcode(); return; }
+    // un cuadro acostado y el siguiente parado (la etiqueta puede estar en cualquier sentido)
+    barRd.turn = !barRd.turn;
+    let src = scanCanvas;
+    if(barRd.turn){
+      const w = scanCanvas.width, h = scanCanvas.height;
+      if(barRot.width !== h) barRot.width = h;
+      if(barRot.height !== w) barRot.height = w;
+      barRotCtx.setTransform(0, 1, -1, 0, h, 0);
+      barRotCtx.drawImage(scanCanvas, 0, 0);
+      src = barRot;
+    }
+    try{
+      const Z = window.ZXing;
+      const bmp = new Z.BinaryBitmap(new Z.HybridBinarizer(new Z.HTMLCanvasElementLuminanceSource(src)));
+      const res = barRd.zx.decode(bmp);
+      if(res) gotBarcode(res.getText());
+    }catch(e){ /* nada en este cuadro */ }
+    finally{ try{ barRd.zx.reset(); }catch(e){} }
+  }
+  const barRot = document.createElement('canvas');
+  const barRotCtx = barRot.getContext('2d', {willReadFrequently:true});
+  /* En la computadora (con ratón) el campo del número queda listo: una pistola lectora escribe ahí y da Enter. */
+  function focusWedge(){
+    try{
+      if(scanMode() !== 'piezas' || !window.matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+      if(document.querySelector('.overlay:not(.hidden)')) return;
+      const a = document.activeElement;
+      if(a && a !== document.body && a.id !== 'manualSkuInput' && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) return;
+      document.getElementById('manualSkuInput').focus({preventScroll:true});
+    }catch(e){}
   }
 
   /* ============ ETIQUETAS REMNANT ============ */
@@ -2139,8 +2235,17 @@
   });
   document.getElementById('remManualBtn').addEventListener('click', ()=>openRemnantModal({mode:'manual'}));
   document.getElementById('manualSkuBtn').addEventListener('click', ()=>{
-    const v = document.getElementById('manualSkuInput').value.trim();
-    if(v) handleScanned(v.toUpperCase());
+    const input = document.getElementById('manualSkuInput');
+    const v = input.value.trim();
+    if(!v) return;
+    if(scanMode() === 'piezas'){
+      // número de la etiqueta escrito a mano, o lo que manda una pistola lectora (escribe y da Enter)
+      input.value = '';
+      handlePieceQr(v);
+      focusWedge();
+      return;
+    }
+    handleScanned(v.toUpperCase());
   });
   document.getElementById('manualSkuInput').addEventListener('keydown', e=>{
     if(e.key==='Enter'){ e.preventDefault(); document.getElementById('manualSkuBtn').click(); }
@@ -2170,7 +2275,8 @@
 
   /* ============ TALLER: piezas de Luxury Design ============
      Luxury Design manda las piezas de cada trabajo (ld:parts:<trabajo>) y la lista ld:jobs. Cada etiqueta lleva un
-     QR "LD|<trabajo>|<pieza>|<número>". Aquí se escanea en tres estaciones: Corte, Edgeband y Armado (por mueble).
+     código de barras con el número del trabajo y el de la pieza ("1042 0007"); las viejas, un QR
+     "LD|<trabajo>|<pieza>|<número>". Aquí se escanea en tres estaciones: Corte, Edgeband y Armado (por mueble).
      Cada teléfono escribe solo su propia clave ld:scan:<trabajo>:<equipo>, así dos teléfonos nunca se pisan.
      La lógica (qué marca cada escaneo, cómo va cada mueble) es la misma de Luxury Design: ld-produccion.js. */
   const LDP = window.LDProd || null;
@@ -2361,12 +2467,47 @@
     if(state.cameraOn) setScanStatus(title, cls === 'bad' ? 'err' : '');
     document.getElementById('scanResultZone').innerHTML = `<div class="pc-card ${cls}"><div class="pc-did">${esc(title)}</div>${text ? `<div class="pc-meta" style="font-family:var(--sans);font-size:13px;">${esc(text)}</div>` : ''}</div>`;
   }
+  /* Código de barras → trabajo (por su número) y pieza (por el número de su etiqueta). Avisa si no se encuentra. */
+  async function resolveBarcode(b){
+    const find = async ()=>{
+      const hits = [];
+      for(const j of LDP.jobsWithCode(taller.jobs, b.code)){
+        let man = taller.manifests[j.jobId];
+        if(!man || man.at !== j.at) man = await loadManifest(j.jobId, true);
+        const p = man && LDP.partByNumber(man, b.num);
+        if(p) hits.push({jobId:j.jobId, uid:p.u, label:p.k, remake:false, job:j.job});
+      }
+      return hits;
+    };
+    let hits = await find();
+    if(hits.length !== 1){
+      // la lista del taller puede estar vieja (un trabajo recién mandado): se vuelve a leer una vez
+      pieceMsg('warn', 'Buscando la pieza…', '');
+      await loadTaller(true);
+      hits = await find();
+    }
+    if(hits.length === 1) return hits[0];
+    const cands = LDP.jobsWithCode(taller.jobs, b.code);
+    if(!cands.length){
+      pieceMsg('bad', `Trabajo ${b.code} sin mandar`, 'Este trabajo no se ha mandado al taller desde Luxury Design (o se mandó antes de las etiquetas con código de barras): vuelve a mandarlo.');
+    }else if(!hits.length){
+      pieceMsg('bad', `No hay pieza #${b.num} en el trabajo ${b.code}`, 'Se cambió el diseño: vuelve a mandar las piezas desde Luxury Design e imprime las etiquetas nuevas.');
+    }else{
+      pieceMsg('bad', `Hay ${hits.length} trabajos con el número ${b.code}`, `${hits.map(h=>h.job).join(' · ')}. En Luxury Design cambia el número de uno (Diseño → Nº de trabajo), vuelve a mandarlo e imprime sus etiquetas.`);
+    }
+    feedback('bad'); return null;
+  }
   async function handlePieceQr(raw){
     if(!LDP){ pieceMsg('bad', 'No se pudo cargar el taller', 'Recarga la página.'); return; }
-    const q = LDP.parseLabelQr(raw);
+    let q = LDP.parseLabelQr(raw);
+    const b = !q && LDP.parseLabelBarcode ? LDP.parseLabelBarcode(raw) : null;
+    if(b){
+      q = await resolveBarcode(b);
+      if(!q) return;
+    }
     if(!q){
       const product = resolveScan(raw);
-      pieceMsg('bad', 'No es una etiqueta de pieza', product ? `Es el QR del producto ${product.sku}. Para sacarlo de una orden usa «Escanear esta orden» en Órdenes.` : 'Este QR no es de una etiqueta de Luxury Design.');
+      pieceMsg('bad', 'No es una etiqueta de pieza', product ? `Es el código del producto ${product.sku}. Para sacarlo de una orden usa «Escanear esta orden» en Órdenes.` : 'Este código no es de una etiqueta de Luxury Design.');
       feedback('bad'); return;
     }
     let man = taller.manifests[q.jobId];

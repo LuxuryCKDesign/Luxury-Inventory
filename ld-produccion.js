@@ -50,9 +50,13 @@ var LDProd = (() => {
     builtKey: () => builtKey,
     doneKey: () => doneKey,
     jobProgress: () => jobProgress,
+    jobsWithCode: () => jobsWithCode,
+    labelBarcodeText: () => labelBarcodeText,
     labelQrText: () => labelQrText,
     mergeEvents: () => mergeEvents,
+    parseLabelBarcode: () => parseLabelBarcode,
     parseLabelQr: () => parseLabelQr,
+    partByNumber: () => partByNumber,
     partReady: () => partReady,
     partsKey: () => partsKey,
     scanKey: () => scanKey,
@@ -82,6 +86,24 @@ var LDProd = (() => {
   }
   var baseUid = (uid) => uid.replace(/(~rk\d*)+$/, "");
   var labelQrText = (jobId, uid, label) => `LD|${jobId}|${uid}|${label}`;
+  function labelBarcodeText(jobCode, label) {
+    var _a, _b;
+    const n = (_b = (_a = String(label != null ? label : "").match(/\d+/)) == null ? void 0 : _a[0]) != null ? _b : "0";
+    return `${jobCode}${n.padStart(4, "0")}`;
+  }
+  function parseLabelBarcode(text) {
+    const t = String(text != null ? text : "").trim().replace(/[\s-]/g, "");
+    if (!/^\d{8,10}$/.test(t)) return null;
+    const code = t.slice(0, -4);
+    const num = String(parseInt(t.slice(-4), 10));
+    if (!/^\d{4,}$/.test(code) || num === "0" || num === "NaN") return null;
+    return { code, num };
+  }
+  var jobsWithCode = (index, code) => index.filter((j) => j && j.code === code);
+  var partByNumber = (manifest, num) => {
+    var _a;
+    return (_a = manifest.parts.find((p) => String(parseInt(p.k, 10)) === num)) != null ? _a : null;
+  };
   var emptyState = () => ({ cut: false, eb: false, dmg: false });
   function mergeEvents(logs) {
     var _a;
@@ -192,9 +214,10 @@ var LDProd = (() => {
     if (!o || typeof o !== "object") return null;
     const m = o;
     if (typeof m.jobId !== "string" || !Array.isArray(m.parts) || !Array.isArray(m.cabinets)) return null;
-    return {
+    return __spreadProps(__spreadValues({
       v: Number(m.v) || PROD_VERSION,
-      jobId: m.jobId,
+      jobId: m.jobId
+    }, typeof m.code === "string" && m.code ? { code: m.code } : {}), {
       job: String((_a = m.job) != null ? _a : ""),
       client: String((_b = m.client) != null ? _b : ""),
       at: Number(m.at) || 0,
@@ -203,7 +226,7 @@ var LDProd = (() => {
         var _a2, _b2;
         return __spreadProps(__spreadValues({}, p), { c: String((_a2 = p.c) != null ? _a2 : ""), eb: !!p.eb, k: String((_b2 = p.k) != null ? _b2 : "") });
       })
-    };
+    });
   }
   function asScanLog(v) {
     var _a;

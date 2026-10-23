@@ -1,11 +1,17 @@
 # Luxury-Inventory
 
-## Taller: piezas de Luxury Design (v30)
+## Taller: piezas de Luxury Design (v31)
 
 - Luxury Design manda las piezas de cada trabajo (Gabinetes → Luxury Inventory → «Mandar las piezas al taller»).
-  Cada etiqueta que imprime lleva un QR `LD|<trabajo>|<pieza>|<número>`.
+  Cada etiqueta lleva un **código de barras** (Code 128, solo números): el número del trabajo y el de la pieza,
+  `1042 0007` = trabajo 1042, pieza #7. Las etiquetas viejas llevan un QR `LD|<trabajo>|<pieza>|<número>` y se siguen leyendo.
+- El código de barras se lee con la cámara (acostado o parado; con el lector del teléfono si lo tiene, si no con
+  ZXing, que se descarga la primera vez), escribiendo el número en el campo de abajo, o con una **pistola lectora**
+  (en la computadora el campo queda listo: la pistola escribe el número y da Enter).
+- Si dos trabajos tienen el mismo número y la pieza existe en los dos, avisa y no marca nada (en Luxury Design se le
+  cambia el número a uno en Diseño → Nº de trabajo).
 - **Escanear → Piezas del taller**: se elige la estación **Corte**, **Edgeband** o **Armado** (se recuerda en cada teléfono) y
-  se escanean los QR. Corte marca la pieza cortada; Edgeband, el edgeband puesto (si la pieza no lleva edgeband, no marca nada);
+  se escanean las etiquetas. Corte marca la pieza cortada; Edgeband, el edgeband puesto (si la pieza no lleva edgeband, no marca nada);
   Armado muestra la lista del mueble y el botón «Mueble armado». En cada pieza: «Dañada / perdida» (con el motivo),
   «Deshacer» y «Quitar marca de dañada». Las dañadas pasan solas al Remake Bin de Luxury Design.
 - Debajo de la cámara, «Trabajos en el taller» muestra cómo va cada trabajo (listas, armados, dañadas) y su detalle por
